@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hostel Booking and Management System</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">🏢</div>
+        Hostel<span>Master</span>
+      </a>
+
+      <button class="menu-toggle" aria-label="Toggle navigation">☰</button>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="rooms.html">Rooms & Blocks</a></li>
+        <li><a href="facilities.html">Facilities</a></li>
+        <li><a href="complaints.html">Complaints</a></li>
+        <li><a href="booking.html">Book Online</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Injected dynamically by script.js -->
+        <a href="login.html" class="btn btn-sm btn-secondary">Login</a>
+        <a href="register.html" class="btn btn-sm btn-primary">Student Register</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-content">
+      <div class="hero-text">
+        <span class="badge badge-ac" style="margin-bottom: 1rem; background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
+          ✦ NEXT-GEN CAMPUS RESIDENCY
+        </span>
+        <h1>Smart Living For <span>Smart Students</span></h1>
+        <p>A modern, automated hostel ecosystem across 4 architecturally designed blocks, 24 floors, and 240 contemporary rooms housing 1,200 ambitious residents. Live comfortably with biometric security, high-speed Wi-Fi, and real-time room availability.</p>
+        <div class="hero-cta">
+          <a href="rooms.html" class="btn btn-lg btn-primary" style="background: #3b82f6;">Explore Available Rooms ➔</a>
+          <a href="register.html" class="btn btn-lg btn-outline" style="border-color: rgba(255,255,255,0.4); color: #fff;">Apply for Bed</a>
+          <a href="login.html" class="btn btn-lg btn-secondary" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25);">Portal Login</a>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <h3 style="color: #fff; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+          <span>Hostel Live Metrics</span>
+          <span class="status-indicator status-available"></span>
+        </h3>
+        <div class="hero-stats-grid">
+          <div class="hero-stat-item">
+            <div class="hero-stat-number" id="hero-blocks">4</div>
+            <div class="hero-stat-label">Hostel Blocks (A, B, C, D)</div>
+          </div>
+          <div class="hero-stat-item">
+            <div class="hero-stat-number" id="hero-floors">24</div>
+            <div class="hero-stat-label">Total Floors (6/Block)</div>
+          </div>
+          <div class="hero-stat-item">
+            <div class="hero-stat-number" id="hero-rooms">240</div>
+            <div class="hero-stat-label">Total Rooms (10/Floor)</div>
+          </div>
+          <div class="hero-stat-item">
+            <div class="hero-stat-number" id="hero-capacity">1,200</div>
+            <div class="hero-stat-label">Resident Capacity (5/Room)</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.15); display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 0.8rem; color: #94a3b8;">Current Live Occupancy</div>
+            <div style="font-size: 1.2rem; font-weight: 700; color: #38bdf8;" id="hero-occ-rate">Calculating...</div>
+          </div>
+          <a href="rooms.html" class="btn btn-sm btn-outline" style="border-color: #38bdf8; color: #38bdf8;">View Floor Grid</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Real-time Status Legend -->
+  <section style="background: #ffffff; border-bottom: 1px solid var(--border-color); padding: 1.25rem 0;">
+    <div class="container flex items-center justify-between" style="flex-wrap: wrap; gap: 1rem;">
+      <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-main);">
+        🔴 Room Color Coding Status:
+      </div>
+      <div class="flex items-center gap-3" style="flex-wrap: wrap;">
+        <div class="flex items-center gap-1">
+          <span class="status-indicator status-available"></span>
+          <span style="font-size: 0.85rem; font-weight: 600;">Green – Available (Vacant)</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <span class="status-indicator status-partial"></span>
+          <span style="font-size: 0.85rem; font-weight: 600;">Orange – Partially Occupied (1-4 Beds)</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <span class="status-indicator status-occupied"></span>
+          <span style="font-size: 0.85rem; font-weight: 600;">Red – Fully Occupied (5 Beds)</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <span class="status-indicator status-maintenance"></span>
+          <span style="font-size: 0.85rem; font-weight: 600;">Grey – Under Maintenance</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 Blocks Architecture Showcase -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="sub-title">Campus Architecture</span>
+        <h2>Explore Our 4 Residential Blocks</h2>
+        <p>Each block features 6 expansive floors with 10 well-ventilated rooms per floor, accommodating up to 300 students per block with dedicated wardens and 24/7 security desks.</p>
+      </div>
+
+      <div class="grid grid-4 gap-3">
+        <!-- Block A -->
+        <div class="card block-card" onclick="window.location.href='rooms.html?block=Block+A'">
+          <div class="block-header">
+            <div>
+              <div class="badge badge-ac" style="margin-bottom: 0.35rem;">Boys Wing</div>
+              <div class="block-title">Block A (Alpha)</div>
+            </div>
+            <span class="status-indicator status-available"></span>
+          </div>
+          <div class="block-body">
+            <div class="block-meta-row">
+              <span>Total Floors</span>
+              <span>6 Floors</span>
+            </div>
+            <div class="block-meta-row">
+              <span>Rooms Count</span>
+              <span>60 Rooms (101-610)</span>
+            </div>
+            <div class="block-meta-row">
+              <span>Student Capacity</span>
+              <span>300 Beds (5/Room)</span>
+            </div>
+            <div class="block-meta-row">
+              <span>Room Types</span>
+              <span>AC & Non-AC Available</span>
+            </div>
+            <button class="btn btn-sm btn-outline" style="width: 100%; margin-top: 1rem;">View Block A Floors ➔</button>
+          </div>
+        </div>
+
+        <!-- Block B -->
+        <div class="card block-card" onclick="window.location.href='rooms.html?block=Block+B'">
+          <div class="block-header">
+            <div>
+              <div class="badge badge-ac" style="margin-bottom: 0.35rem;">Boys Wing</div>
+              <div class="block-title">Block B (Beta)</div>
+            </div>
+            <span class="status-indicator status-partial"></span>
+          </div>
+          <div class="block-body">
+            <div class="block-meta-row">
+              <span>Total Floors</span>
+              <span>6 Floors</span>
+            </div>
+            <div class="block-meta-row">
+              <span>Rooms Count</span>
+              <span>60 Rooms (101-610)</span>
+            </div>
+            <div class="block-meta-row">
+              <span>Student Capacity</span>
+              <span>300 Beds (5/Room)</span>
+            </div>
+            <div class="block-meta-row">
+              <span>Room Types</span>
+              <span>AC & Non-AC Available</span>
+            </div>
+            <button class="btn btn-sm btn-outline" style="width: 100%; margin-top: 1rem;">View Block B Floors ➔</button>
+          </div>
+        </div>
+
+        <!-- Block C -->
+        <div class="card block-card" onclick="window.location.href='rooms.html?block=Block+C'">
+          <div class="block-header">
+            <div>
+              <div class="badge badge-nonac" style="margin-bottom: 0.35rem;">Girls Wing</div>
+              <div class="block-title">Block C (Gamma)</div>
+            </div>
+            <span class="status-indicator status-available"></span>
+          </div>
+          <div class="block-body">
+            <div class="block-meta-row">
+              <span>Total Floors</span>
+              <span>6 Floors</span>
+            </div>
+            <div class="block-meta-row">
+              <span>Rooms Count</span>
+              <span>60 Rooms (101-610)</span>
+            </div>
+            <div class="block-meta-row">
+              <span>Student Capacity</span>
+              <span>300 Beds (5/Room)</span>
+            </div>
+            <div class="block-meta-row">
+              <span>Room Types</span>
+              <span>Attached Bath Available</span>
+            </div>
+            <button class="btn btn-sm btn-outline" style="width: 100%; margin-top: 1rem;">View Block C Floors ➔</button>
+          </div>
+        </div>
+
+        <!-- Block D -->
+        <div class="card block-card" onclick="window.location.href='rooms.html?block=Block+D'">
+          <div class="block-header">
+            <div>
+              <div class="badge badge-nonac" style="margin-bottom: 0.35rem;">Girls Wing</div>
+              <div class="block-title">Block D (Delta)</div>
+            </div>
+            <span class="status-indicator status-partial"></span>
+          </div>
+          <div class="block-body">
+            <div class="block-meta-row">
+              <span>Total Floors</span>
+              <span>6 Floors</span>
+            </div>
+            <div class="block-meta-row">
+              <span>Rooms Count</span>
+              <span>60 Rooms (101-610)</span>
+            </div>
+            <div class="block-meta-row">
+              <span>Student Capacity</span>
+              <span>300 Beds (5/Room)</span>
+            </div>
+            <div class="block-meta-row">
+              <span>Room Types</span>
+              <span>Executive AC Wings</span>
+            </div>
+            <button class="btn btn-sm btn-outline" style="width: 100%; margin-top: 1rem;">View Block D Floors ➔</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Facilities Highlights -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-header">
+        <span class="sub-title">Living Standards</span>
+        <h2>World-Class Amenities For Students</h2>
+        <p>Everything you need for academic excellence, physical wellness, and everyday convenience right under one roof.</p>
+      </div>
+
+      <div class="grid grid-3 gap-3">
+        <div class="card" style="padding: 1.5rem;">
+          <div class="facility-icon-wrap">📶</div>
+          <h3>500 Mbps Wi-Fi Mesh</h3>
+          <p>Uninterrupted dual-band fiber optic Wi-Fi across every room, study floor, and common area with backup leased lines.</p>
+        </div>
+        <div class="card" style="padding: 1.5rem;">
+          <div class="facility-icon-wrap">🛡️</div>
+          <h3>24/7 Biometric & CCTV</h3>
+          <p>240+ HD night-vision cameras, professional security staff, and automated biometric turnstile entry gates.</p>
+        </div>
+        <div class="card" style="padding: 1.5rem;">
+          <div class="facility-icon-wrap">💧</div>
+          <h3>RO Clean Drinking Water</h3>
+          <p>Multi-stage commercial UV+RO water purification and chilled dispenser plants installed on each floor.</p>
+        </div>
+        <div class="card" style="padding: 1.5rem;">
+          <div class="facility-icon-wrap">🍽️</div>
+          <h3>Hygienic Dining Hall</h3>
+          <p>Nutritious 4-meal daily menu planned by nutritionists in a clean, stainless-steel commercial kitchen.</p>
+        </div>
+        <div class="card" style="padding: 1.5rem;">
+          <div class="facility-icon-wrap">⚡</div>
+          <h3>100% Power Backup</h3>
+          <p>Heavy-duty twin diesel generator plants ensure zero power cuts for study lamps, Wi-Fi, fans, and elevators.</p>
+        </div>
+        <div class="card" style="padding: 1.5rem;">
+          <div class="facility-icon-wrap">🧼</div>
+          <h3>Daily Housekeeping</h3>
+          <p>Daily corridor sweeping, sanitized bathroom disinfection, and managed waste management protocols.</p>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 2.5rem;">
+        <a href="facilities.html" class="btn btn-lg btn-primary">View All 14 Hostel Facilities ➔</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works / Steps -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="sub-title">Seamless Experience</span>
+        <h2>How Online Booking Works</h2>
+        <p>Get your hostel bed secured in 4 straightforward digital steps with zero paper delays.</p>
+      </div>
+
+      <div class="grid grid-4 gap-3">
+        <div class="card" style="padding: 1.75rem; text-align: center;">
+          <div style="font-size: 2.2rem; font-weight: 800; color: var(--primary-light); margin-bottom: 0.5rem;">01</div>
+          <h4>Register Account</h4>
+          <p style="font-size: 0.88rem; margin-top: 0.5rem;">Fill student details, college info, and verify your phone via OTP.</p>
+        </div>
+        <div class="card" style="padding: 1.75rem; text-align: center;">
+          <div style="font-size: 2.2rem; font-weight: 800; color: var(--secondary); margin-bottom: 0.5rem;">02</div>
+          <h4>Pick Block & Floor</h4>
+          <p style="font-size: 0.88rem; margin-top: 0.5rem;">Browse 240 rooms across 4 blocks with live vacancy indicators.</p>
+        </div>
+        <div class="card" style="padding: 1.75rem; text-align: center;">
+          <div style="font-size: 2.2rem; font-weight: 800; color: var(--accent); margin-bottom: 0.5rem;">03</div>
+          <h4>Select Bed & Pay</h4>
+          <p style="font-size: 0.88rem; margin-top: 0.5rem;">Confirm AC/Non-AC plan, pay rent & deposit via demo payment gateway.</p>
+        </div>
+        <div class="card" style="padding: 1.75rem; text-align: center;">
+          <div style="font-size: 2.2rem; font-weight: 800; color: var(--status-available); margin-bottom: 0.5rem;">04</div>
+          <h4>Check In & Enjoy</h4>
+          <p style="font-size: 0.88rem; margin-top: 0.5rem;">Download printable receipt, get room key, and access student dashboard.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Emergency Contacts & Hostel Rules Banner -->
+  <section class="section section-alt" style="padding: 3rem 0;">
+    <div class="container grid grid-2 gap-3">
+      <div class="card" style="padding: 2rem;">
+        <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>🚨</span> Emergency & Warden Contacts
+        </h3>
+        <p style="margin-bottom: 1rem;">24/7 campus helpline numbers for medical, security, or maintenance emergencies:</p>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.95rem;">
+          <li><strong>Chief Warden Office:</strong> +91 9811223344 (Dr. Rajesh Verma)</li>
+          <li><strong>Boys Hostel Supervisor:</strong> +91 9845112233 (Blocks A & B)</li>
+          <li><strong>Girls Hostel Supervisor:</strong> +91 9845112255 (Blocks C & D)</li>
+          <li><strong>Campus Medical Center:</strong> 011-28776699 (24/7 Ambulance)</li>
+          <li><strong>Security Gate Control:</strong> 011-28776600</li>
+        </ul>
+      </div>
+
+      <div class="card" style="padding: 2rem;">
+        <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>📋</span> Code of Conduct & Rules
+        </h3>
+        <ul style="padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.9rem; color: var(--text-muted);">
+          <li>Strict curfew at <strong>10:30 PM</strong>. Late entry requires warden permission via portal.</li>
+          <li>No smoking, alcohol, or prohibited substances permitted anywhere on campus.</li>
+          <li>Max 5 students strictly maintained per room to avoid overcrowding.</li>
+          <li>Vacating requests must be submitted at least <strong>15 days</strong> in advance via student dashboard.</li>
+          <li>Study hours observed daily from 9:00 PM to 6:00 AM in corridors.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container grid grid-4 gap-3">
+      <div>
+        <div class="brand-logo" style="color: #fff; margin-bottom: 1rem;">
+          <div class="brand-icon">🏢</div>
+          Hostel<span>Master</span>
+        </div>
+        <p>A full-featured, automated accommodation and management solution for educational institutions, hostels, and residential complexes.</p>
+      </div>
+
+      <div>
+        <h4>Quick Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="rooms.html">All 240 Rooms</a></li>
+          <li><a href="facilities.html">Hostel Facilities</a></li>
+          <li><a href="booking.html">Online Booking</a></li>
+          <li><a href="complaints.html">Complaint Portal</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>User Portals</h4>
+        <ul class="footer-links">
+          <li><a href="student-dashboard.html">Student Dashboard</a></li>
+          <li><a href="admin-dashboard.html">Admin Dashboard</a></li>
+          <li><a href="register.html">Student Registration</a></li>
+          <li><a href="login.html">Login Portal</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Hostel Office</h4>
+        <p>Hostel Master Central Office, Campus North Gate, University Road.</p>
+        <p style="margin-top: 0.5rem;"><strong>Email:</strong> admin@hostel.com</p>
+        <p><strong>Phone:</strong> +91 9811223344</p>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>© 2026 Hostel Booking and Management System. Designed for performance, reliability, and security.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // Load dynamic live statistics on the hero card
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const stats = await HostelDB.getStats();
+        if (stats) {
+          document.getElementById('hero-blocks').innerText = stats.total_blocks || 4;
+          document.getElementById('hero-floors').innerText = stats.total_floors || 24;
+          document.getElementById('hero-rooms').innerText = stats.total_rooms || 240;
+          document.getElementById('hero-capacity').innerText = (stats.total_capacity || 1200).toLocaleString();
+          document.getElementById('hero-occ-rate').innerText = `${stats.occupancy_rate || 42}% (${stats.occupied_beds || 504}/${stats.total_capacity || 1200} Beds)`;
+        }
+      } catch (e) {
+        console.error('Stats loading error', e);
+      }
+    });
+  </script>
+</body>
+</html>

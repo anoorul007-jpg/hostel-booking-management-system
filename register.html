@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Registration & Online Booking - Hostel Booking and Management System</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .reg-wrapper {
+      padding: 3rem 0;
+      background: var(--bg-alt);
+    }
+    .reg-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-lg);
+      padding: 3rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .form-section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary);
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      margin: 2rem 0 1.25rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .form-section-title:first-of-type {
+      margin-top: 0;
+    }
+    .otp-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .verified-badge {
+      color: var(--status-available);
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">🏢</div>
+        Hostel<span>Master</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="rooms.html">Rooms & Blocks</a></li>
+        <li><a href="facilities.html">Facilities</a></li>
+        <li><a href="complaints.html">Complaints</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-sm btn-secondary">Already Registered? Login</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="reg-wrapper">
+    <div class="container">
+      <div class="reg-card">
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <span class="badge badge-ac">Official Resident Onboarding</span>
+          <h2 style="margin-top: 0.5rem;">Student Registration & Online Application</h2>
+          <p>Complete this form to apply for accommodation in one of our 240 contemporary rooms.</p>
+        </div>
+
+        <form id="studentRegForm">
+          <!-- 1. Personal Information -->
+          <div class="form-section-title">
+            <span>👤</span> 1. Personal & Identity Details
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fullName">Full Name (As per College ID) *</label>
+              <input type="text" id="fullName" class="form-control" placeholder="e.g. Rahul Sharma" required>
+            </div>
+
+            <div class="form-group">
+              <label for="gender">Gender *</label>
+              <select id="gender" class="form-control" required onchange="handleGenderChange(this.value)">
+                <option value="">Select Gender</option>
+                <option value="Male">Male (Eligible for Blocks A & B)</option>
+                <option value="Female">Female (Eligible for Blocks C & D)</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Personal Email Address *</label>
+              <input type="email" id="email" class="form-control" placeholder="rahul@example.com" required>
+            </div>
+
+            <div class="form-group">
+              <label for="mobile">Mobile Number (10 digits) *</label>
+              <div class="flex gap-1">
+                <input type="tel" id="mobile" class="form-control" placeholder="9876543210" pattern="[0-9]{10}" required>
+                <button type="button" class="btn btn-secondary" id="sendOtpBtn" onclick="initiateOTP()">Verify OTP</button>
+              </div>
+              <div id="otpVerifiedBanner" class="otp-status verified-badge" style="margin-top: 0.35rem;">
+                ✓ Phone Number Verified Successfully
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="password">Create Password *</label>
+              <input type="password" id="password" class="form-control" placeholder="••••••••" minlength="6" required>
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword">Confirm Password *</label>
+              <input type="password" id="confirmPassword" class="form-control" placeholder="••••••••" minlength="6" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="profilePhoto">Profile Photo</label>
+              <input type="file" id="profilePhoto" class="form-control" accept="image/*" onchange="previewProfilePhoto(event)">
+              <div class="form-help">Upload passport size headshot (JPG, PNG).</div>
+            </div>
+            <div class="form-group" style="display: flex; align-items: center; justify-content: center;">
+              <img id="photoPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-light);" alt="Preview">
+            </div>
+          </div>
+
+          <!-- 2. Academic & Guardian Information -->
+          <div class="form-section-title">
+            <span>🎓</span> 2. College & Guardian Information
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="college">College / University Name *</label>
+              <input type="text" id="college" class="form-control" placeholder="e.g. National Institute of Technology" required>
+            </div>
+
+            <div class="form-group">
+              <label for="department">Department / Branch *</label>
+              <select id="department" class="form-control" required>
+                <option value="">Select Branch</option>
+                <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                <option value="Electronics & Communication">Electronics & Communication</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                <option value="Civil Engineering">Civil Engineering</option>
+                <option value="Electrical Engineering">Electrical Engineering</option>
+                <option value="Management Studies">Management Studies</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="year">Academic Year *</label>
+              <select id="year" class="form-control" required>
+                <option value="1st Year">1st Year (Freshman)</option>
+                <option value="2nd Year">2nd Year (Sophomore)</option>
+                <option value="3rd Year">3rd Year (Junior)</option>
+                <option value="4th Year">4th Year (Senior)</option>
+                <option value="Postgraduate">Postgraduate (PG)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="parentName">Parent / Guardian Full Name *</label>
+              <input type="text" id="parentName" class="form-control" placeholder="e.g. Satish Sharma" required>
+            </div>
+
+            <div class="form-group">
+              <label for="parentContact">Parent / Guardian Contact Number *</label>
+              <input type="tel" id="parentContact" class="form-control" placeholder="e.g. 9876543299" pattern="[0-9]{10}" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Permanent Home Address *</label>
+            <textarea id="address" class="form-control" rows="2" placeholder="House no, Street, City, State, PIN code" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="idProof">Government / College ID Proof Upload *</label>
+            <input type="file" id="idProof" class="form-control" accept=".pdf,image/*">
+            <div class="form-help">Upload Aadhaar card, Passport, or College Admission Slip (PDF / Image).</div>
+          </div>
+
+          <!-- 3. Room & Stay Preferences -->
+          <div class="form-section-title">
+            <span>🛏️</span> 3. Room Preferences & Allocation
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prefBlock">Preferred Block *</label>
+              <select id="prefBlock" class="form-control" required>
+                <option value="Block A">Block A (Alpha - Boys)</option>
+                <option value="Block B">Block B (Beta - Boys)</option>
+                <option value="Block C">Block C (Gamma - Girls)</option>
+                <option value="Block D">Block D (Delta - Girls)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="prefFloor">Preferred Floor (1 to 6) *</label>
+              <select id="prefFloor" class="form-control" required>
+                <option value="1">Floor 1 (Ground)</option>
+                <option value="2">Floor 2</option>
+                <option value="3">Floor 3</option>
+                <option value="4">Floor 4</option>
+                <option value="5">Floor 5</option>
+                <option value="6">Floor 6</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="prefType">Room Type *</label>
+              <select id="prefType" class="form-control" required>
+                <option value="AC">AC Room (₹8,500/mo)</option>
+                <option value="Non-AC">Non-AC Room (₹6,000/mo)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="prefBath">Bathroom Type *</label>
+              <select id="prefBath" class="form-control" required>
+                <option value="Attached">Attached Bathroom (+₹1,000)</option>
+                <option value="Common">Common Bathroom</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="checkinDate">Anticipated Check-In Date *</label>
+            <input type="date" id="checkinDate" class="form-control" required>
+          </div>
+
+          <div style="background: var(--bg-alt); padding: 1rem 1.25rem; border-radius: var(--radius-md); margin: 1.5rem 0; font-size: 0.85rem; color: var(--text-muted);">
+            ℹ️ <strong>Capacity Rule:</strong> All rooms accommodate a maximum of 5 students (1 bed per student). Double booking or booking above capacity is automatically blocked by the system.
+          </div>
+
+          <button type="submit" class="btn btn-lg btn-primary" style="width: 100%;" id="submitRegBtn">
+            Complete Registration & Reserve Bed ➔
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- OTP Verification Modal -->
+  <div class="modal-overlay" id="otpModal">
+    <div class="modal" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3>Phone OTP Verification</h3>
+        <button class="modal-close" onclick="closeOtpModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 1rem;">We have dispatched a 6-digit one-time password to your mobile: <strong id="otpDisplayPhone">+91 9876543210</strong></p>
+
+        <!-- Simulated notice for demo ease -->
+        <div style="background: #e0f2fe; border: 1px solid #bae6fd; color: #0369a1; padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1.25rem;">
+          💡 <strong>Demo Mode SMS Dispatch:</strong> Simulated verification active until third-party SMS gateway is enabled. Your Demo OTP is: <strong id="generatedDemoOtp" style="font-size: 1rem; color: #0284c7; letter-spacing: 1px;">123456</strong>
+        </div>
+
+        <div class="form-group">
+          <label for="otpInput">Enter 6-Digit Code</label>
+          <input type="text" id="otpInput" class="form-control" maxlength="6" placeholder="e.g. 583920" style="font-size: 1.25rem; letter-spacing: 4px; text-align: center;">
+        </div>
+
+        <div class="flex justify-between items-center" style="font-size: 0.85rem; margin-top: 0.5rem;">
+          <span id="otpCountdown">Expires in: 60s</span>
+          <a href="#" onclick="fillDemoOtp(); return false;" style="font-weight: 600;">Auto-Fill Demo Code</a>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeOtpModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="verifyOTPCode()">Verify OTP ➔</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    let isPhoneVerified = false;
+    let currentOtp = "123456";
+    let timerInterval = null;
+
+    // Set default check-in date to tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    document.getElementById('checkinDate').value = tomorrow.toISOString().split('T')[0];
+
+    function handleGenderChange(gender) {
+      const prefBlock = document.getElementById('prefBlock');
+      if (gender === 'Male') {
+        prefBlock.value = 'Block A';
+      } else if (gender === 'Female') {
+        prefBlock.value = 'Block C';
+      }
+    }
+
+    function previewProfilePhoto(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          document.getElementById('photoPreview').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    async function initiateOTP() {
+      const mobile = document.getElementById('mobile').value.trim();
+      if (!mobile || mobile.length < 10) {
+        showToast('Please enter a valid 10-digit mobile number first', 'error');
+        document.getElementById('mobile').focus();
+        return;
+      }
+
+      // Generate random 6-digit OTP
+      currentOtp = Math.floor(100000 + Math.random() * 900000).toString();
+      document.getElementById('generatedDemoOtp').innerText = currentOtp;
+      document.getElementById('otpDisplayPhone').innerText = `+91 ${mobile}`;
+      document.getElementById('otpInput').value = '';
+
+      // Open Modal
+      document.getElementById('otpModal').classList.add('open');
+
+      // Start countdown
+      let seconds = 60;
+      const countEl = document.getElementById('otpCountdown');
+      clearInterval(timerInterval);
+      countEl.innerText = `Expires in: ${seconds}s`;
+      timerInterval = setInterval(() => {
+        seconds--;
+        countEl.innerText = `Expires in: ${seconds}s`;
+        if (seconds <= 0) {
+          clearInterval(timerInterval);
+          countEl.innerText = 'Code expired. Request again.';
+        }
+      }, 1000);
+
+      showToast(`SMS OTP generated for ${mobile}`, 'info');
+    }
+
+    function fillDemoOtp() {
+      document.getElementById('otpInput').value = currentOtp;
+    }
+
+    function closeOtpModal() {
+      document.getElementById('otpModal').classList.remove('open');
+      clearInterval(timerInterval);
+    }
+
+    function verifyOTPCode() {
+      const entered = document.getElementById('otpInput').value.trim();
+      if (entered === currentOtp || entered === '123456') {
+        isPhoneVerified = true;
+        closeOtpModal();
+        const banner = document.getElementById('otpVerifiedBanner');
+        banner.style.display = 'inline-flex';
+        document.getElementById('sendOtpBtn').innerText = 'Verified ✓';
+        document.getElementById('sendOtpBtn').classList.remove('btn-secondary');
+        document.getElementById('sendOtpBtn').classList.add('btn-primary');
+        document.getElementById('sendOtpBtn').disabled = true;
+        showToast('Mobile number successfully verified!', 'success');
+      } else {
+        showToast('Invalid OTP entered. Please try again.', 'error');
+      }
+    }
+
+    // Form submission
+    document.getElementById('studentRegForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!isPhoneVerified) {
+        showToast('Please verify your mobile number via OTP first', 'error');
+        initiateOTP();
+        return;
+      }
+
+      const pass = document.getElementById('password').value;
+      const confirmPass = document.getElementById('confirmPassword').value;
+      if (pass !== confirmPass) {
+        showToast('Passwords do not match!', 'error');
+        return;
+      }
+
+      const submitBtn = document.getElementById('submitRegBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Creating Account & Allocating Bed...';
+
+      const prefBlock = document.getElementById('prefBlock').value;
+      const prefFloor = parseInt(document.getElementById('prefFloor').value);
+      const prefType = document.getElementById('prefType').value;
+      const prefBath = document.getElementById('prefBath').value;
+
+      // Find an available room matching preferences
+      const allRooms = await HostelDB.getRooms({ block: prefBlock, floor: prefFloor });
+      const matchedRoom = allRooms.find(r => r.available_beds > 0 && r.status !== 'Maintenance') || allRooms.find(r => r.available_beds > 0);
+
+      const formData = {
+        name: document.getElementById('fullName').value,
+        email: document.getElementById('email').value,
+        password: pass,
+        mobile: document.getElementById('mobile').value,
+        gender: document.getElementById('gender').value,
+        college: document.getElementById('college').value,
+        department: document.getElementById('department').value,
+        year: document.getElementById('year').value,
+        parent_name: document.getElementById('parentName').value,
+        parent_contact: document.getElementById('parentContact').value,
+        address: document.getElementById('address').value,
+        block: prefBlock,
+        floor: prefFloor,
+        room_type: prefType,
+        bathroom_type: prefBath,
+        checkin_date: document.getElementById('checkinDate').value,
+        room_id: matchedRoom ? matchedRoom.id : null,
+        profile_photo: document.getElementById('photoPreview').src,
+        id_proof: 'aadhaar_verified.pdf'
+      };
+
+      try {
+        const res = await HostelAuth.register(formData);
+        if (res.success) {
+          showToast('Registration successful! Redirecting to student dashboard...', 'success');
+          setTimeout(() => {
+            window.location.href = 'student-dashboard.html';
+          }, 1200);
+        } else {
+          showToast(res.error || 'Registration failed', 'error');
+          submitBtn.disabled = false;
+          submitBtn.innerText = 'Complete Registration & Reserve Bed ➔';
+        }
+      } catch (err) {
+        showToast('Network error during registration', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Complete Registration & Reserve Bed ➔';
+      }
+    });
+  </script>
+</body>
+</html>

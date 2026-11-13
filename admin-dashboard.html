@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hostel Admin & Warden Management Portal - Hostel Booking and Management System</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .admin-header-actions {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">🏢</div>
+        Hostel<span>Master</span> <small class="badge badge-occupied" style="margin-left: 0.5rem; font-size: 0.7rem;">ADMIN PORTAL</small>
+      </a>
+
+      <button class="menu-toggle" aria-label="Toggle navigation">☰</button>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Main Website</a></li>
+        <li><a href="rooms.html">Rooms Navigator</a></li>
+        <li><a href="facilities.html">Facilities</a></li>
+        <li><a href="complaints.html">Complaints</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </header>
+
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-user">
+        <img id="adminSidebarAvatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300&q=80" class="sidebar-user-img" alt="Warden">
+        <div class="sidebar-user-info">
+          <h4 id="adminSidebarName">Dr. Rajesh Verma</h4>
+          <small>Chief Hostel Warden</small>
+        </div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li>
+          <div class="sidebar-link active" id="tab-admin-overview" onclick="switchAdminTab('overview')">
+            <span class="icon">📊</span> Overview & KPI Metrics
+          </div>
+        </li>
+        <li>
+          <div class="sidebar-link" id="tab-admin-rooms" onclick="switchAdminTab('rooms')">
+            <span class="icon">🏢</span> Room Management (240)
+          </div>
+        </li>
+        <li>
+          <div class="sidebar-link" id="tab-admin-bookings" onclick="switchAdminTab('bookings')">
+            <span class="icon">📥</span> New Bookings (<span id="sidebarPendingCount">0</span>)
+          </div>
+        </li>
+        <li>
+          <div class="sidebar-link" id="tab-admin-students" onclick="switchAdminTab('students')">
+            <span class="icon">👥</span> Student Directory
+          </div>
+        </li>
+        <li>
+          <div class="sidebar-link" id="tab-admin-vacating" onclick="switchAdminTab('vacating')">
+            <span class="icon">📦</span> Vacating Requests (<span id="sidebarVacateCount">0</span>)
+          </div>
+        </li>
+        <li>
+          <div class="sidebar-link" id="tab-admin-complaints" onclick="switchAdminTab('complaints')">
+            <span class="icon">🛠️</span> Complaints (<span id="sidebarComplaintCount">0</span>)
+          </div>
+        </li>
+        <li>
+          <div class="sidebar-link" id="tab-admin-notices" onclick="switchAdminTab('notices')">
+            <span class="icon">📢</span> Notice Board
+          </div>
+        </li>
+        <li>
+          <div class="sidebar-link" id="tab-admin-reports" onclick="switchAdminTab('reports')">
+            <span class="icon">📄</span> Reports & Exports
+          </div>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-sm btn-outline" style="width: 100%;" onclick="HostelAuth.logout()">
+          Sign Out Admin
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="dashboard-main">
+      <!-- Top Title & Action Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 style="font-size: 1.85rem;">Hostel Administration & Oversight</h2>
+          <p>Real-time campus occupancy, room inventory, and resident welfare dashboard.</p>
+        </div>
+        <div class="admin-header-actions">
+          <button class="btn btn-sm btn-primary" onclick="openAddRoomModal()">+ Add Room</button>
+          <button class="btn btn-sm btn-secondary" onclick="openAddNoticeModal()">+ Post Notice</button>
+          <button class="btn btn-sm btn-outline" onclick="exportDataCSV('rooms')">⬇ Export Rooms CSV</button>
+        </div>
+      </div>
+
+      <!-- TAB 1: OVERVIEW & KPIS -->
+      <section id="panel-admin-overview">
+        <!-- Live KPI Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon blue">🏢</div>
+            <div class="stat-details">
+              <h3 id="statBlocksFloors">4 / 24</h3>
+              <p>Total Blocks / Floors</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon purple">🚪</div>
+            <div class="stat-details">
+              <h3 id="statTotalRooms">240</h3>
+              <p>Total Rooms</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green">👥</div>
+            <div class="stat-details">
+              <h3 id="statCapacity">1,200</h3>
+              <p>Total Resident Capacity</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon orange">🛏️</div>
+            <div class="stat-details">
+              <h3 id="statOccupiedBeds">--</h3>
+              <p>Occupied Beds (<span id="statOccRate">--%</span>)</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green">🟢</div>
+            <div class="stat-details">
+              <h3 id="statAvailBeds">--</h3>
+              <p>Available Vacant Beds</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon blue">❄️</div>
+            <div class="stat-details">
+              <h3 id="statAcVsNonAc">-- / --</h3>
+              <p>AC Rooms / Non-AC</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon orange">📥</div>
+            <div class="stat-details">
+              <h3 id="statPendingBookings">0</h3>
+              <p>New Booking Requests</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon red">⚠️</div>
+            <div class="stat-details">
+              <h3 id="statActiveComplaints">0</h3>
+              <p>Active Complaints Pending</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green">💰</div>
+            <div class="stat-details">
+              <h3 id="statRevenue">₹0</h3>
+              <p>Total Monthly Revenue</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Blocks Occupancy Cards -->
+        <h3 style="margin: 2rem 0 1rem 0;">Hostel Blocks Occupancy Status</h3>
+        <div class="grid grid-4 gap-3">
+          <div class="card" style="padding: 1.5rem;">
+            <div class="flex justify-between items-center" style="margin-bottom: 0.5rem;">
+              <h4>Block A (Alpha)</h4>
+              <span class="badge badge-ac">Boys</span>
+            </div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: var(--primary);" id="blockA_occ">60 Rooms</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.35rem;">Floors 1-6 • 300 Capacity</div>
+            <button class="btn btn-sm btn-outline" style="width: 100%; margin-top: 1rem;" onclick="filterRoomsByBlock('Block A')">Manage Block A ➔</button>
+          </div>
+
+          <div class="card" style="padding: 1.5rem;">
+            <div class="flex justify-between items-center" style="margin-bottom: 0.5rem;">
+              <h4>Block B (Beta)</h4>
+              <span class="badge badge-ac">Boys</span>
+            </div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: var(--primary);" id="blockB_occ">60 Rooms</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.35rem;">Floors 1-6 • 300 Capacity</div>
+            <button class="btn btn-sm btn-outline" style="width: 100%; margin-top: 1rem;" onclick="filterRoomsByBlock('Block B')">Manage Block B ➔</button>
+          </div>
+
+          <div class="card" style="padding: 1.5rem;">
+            <div class="flex justify-between items-center" style="margin-bottom: 0.5rem;">
+              <h4>Block C (Gamma)</h4>
+              <span class="badge badge-nonac">Girls</span>
+            </div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: var(--primary);" id="blockC_occ">60 Rooms</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.35rem;">Floors 1-6 • 300 Capacity</div>
+            <button class="btn btn-sm btn-outline" style="width: 100%; margin-top: 1rem;" onclick="filterRoomsByBlock('Block C')">Manage Block C ➔</button>
+          </div>
+
+          <div class="card" style="padding: 1.5rem;">
+            <div class="flex justify-between items-center" style="margin-bottom: 0.5rem;">
+              <h4>Block D (Delta)</h4>
+              <span class="badge badge-nonac">Girls</span>
+            </div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: var(--primary);" id="blockD_occ">60 Rooms</div>
+            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.35rem;">Floors 1-6 • 300 Capacity</div>
+            <button class="btn btn-sm btn-outline" style="width: 100%; margin-top: 1rem;" onclick="filterRoomsByBlock('Block D')">Manage Block D ➔</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: ROOM MANAGEMENT (240 ROOMS) -->
+      <section id="panel-admin-rooms" style="display: none;">
+        <div class="card" style="padding: 1.75rem; margin-bottom: 1.5rem;">
+          <div class="flex items-center justify-between" style="flex-wrap: wrap; gap: 1rem;">
+            <div class="flex items-center gap-2" style="flex-wrap: wrap;">
+              <select id="adminBlockFilter" class="form-control" style="width: 160px;" onchange="loadAdminRoomsTable()">
+                <option value="">All 4 Blocks</option>
+                <option value="Block A">Block A</option>
+                <option value="Block B">Block B</option>
+                <option value="Block C">Block C</option>
+                <option value="Block D">Block D</option>
+              </select>
+
+              <select id="adminFloorFilter" class="form-control" style="width: 140px;" onchange="loadAdminRoomsTable()">
+                <option value="">All 6 Floors</option>
+                <option value="1">Floor 1</option>
+                <option value="2">Floor 2</option>
+                <option value="3">Floor 3</option>
+                <option value="4">Floor 4</option>
+                <option value="5">Floor 5</option>
+                <option value="6">Floor 6</option>
+              </select>
+
+              <select id="adminStatusFilter" class="form-control" style="width: 160px;" onchange="loadAdminRoomsTable()">
+                <option value="">All Statuses</option>
+                <option value="Available">Available</option>
+                <option value="Partially Occupied">Partially Occupied</option>
+                <option value="Fully Occupied">Fully Occupied</option>
+                <option value="Maintenance">Maintenance</option>
+              </select>
+
+              <input type="text" id="adminRoomSearch" class="form-control" style="width: 180px;" placeholder="Search room no..." oninput="loadAdminRoomsTable()">
+            </div>
+
+            <div>
+              <button class="btn btn-sm btn-primary" onclick="openAddRoomModal()">+ Add New Room</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Room ID</th>
+                <th>Block & Floor</th>
+                <th>Room Type</th>
+                <th>Bathroom</th>
+                <th>Occupancy (Capacity: 5)</th>
+                <th>Monthly Rent</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminRoomsTbody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 3: BOOKINGS APPROVALS -->
+      <section id="panel-admin-bookings" style="display: none;">
+        <div class="card" style="padding: 2rem;">
+          <h3 style="margin-bottom: 1.25rem;">New Student Registrations & Room Applications</h3>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Student ID</th>
+                  <th>Student Name</th>
+                  <th>Contact</th>
+                  <th>Department & Year</th>
+                  <th>Target Room</th>
+                  <th>Check-In Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminBookingsTbody">
+                <!-- Injected dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: STUDENT DIRECTORY -->
+      <section id="panel-admin-students" style="display: none;">
+        <div class="card" style="padding: 1.75rem; margin-bottom: 1.5rem;">
+          <div class="flex items-center justify-between" style="flex-wrap: wrap; gap: 1rem;">
+            <div class="flex items-center gap-2">
+              <input type="text" id="studentSearchInput" class="form-control" style="width: 250px;" placeholder="Search student name, email, room..." oninput="loadAdminStudents()">
+              <select id="studentStatusFilter" class="form-control" style="width: 180px;" onchange="loadAdminStudents()">
+                <option value="">All Resident Statuses</option>
+                <option value="Active">Active Residents</option>
+                <option value="Pending Approval">Pending Approval</option>
+                <option value="Vacating Requested">Vacating Requested</option>
+                <option value="Vacated">Vacated (Archived)</option>
+              </select>
+            </div>
+            <button class="btn btn-sm btn-outline" onclick="exportDataCSV('students')">⬇ Export Student Roster CSV</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>College / Branch</th>
+                <th>Allocated Room</th>
+                <th>Bed</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th>Check-In Date</th>
+                <th>Dossier</th>
+              </tr>
+            </thead>
+            <tbody id="adminStudentsTbody">
+              <!-- Dynamically injected -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 5: VACATING REQUESTS -->
+      <section id="panel-admin-vacating" style="display: none;">
+        <div class="card" style="padding: 2rem;">
+          <h3 style="margin-bottom: 1.25rem;">Student Room Vacating & Checkout Requests</h3>
+          <p style="font-size: 0.88rem; margin-bottom: 1.25rem;">Approving a vacating request immediately marks the student as Vacated, updates their checkout date, and automatically releases the bed to the room's available count.</p>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Student Name</th>
+                  <th>Room & Bed</th>
+                  <th>Requested Leaving Date</th>
+                  <th>Reason</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminVacatingTbody">
+                <!-- Dynamically injected -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: COMPLAINT RESOLUTION -->
+      <section id="panel-admin-complaints" style="display: none;">
+        <div class="card" style="padding: 2rem;">
+          <div class="flex justify-between items-center" style="margin-bottom: 1.25rem;">
+            <h3>Hostel Complaints & Maintenance Queue</h3>
+            <button class="btn btn-sm btn-secondary" onclick="loadAdminComplaints()">↻ Refresh Queue</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Ticket</th>
+                  <th>Student & Room</th>
+                  <th>Category</th>
+                  <th>Priority</th>
+                  <th>Issue Details</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="adminComplaintsTbody">
+                <!-- Dynamically injected -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 7: NOTICE BOARD -->
+      <section id="panel-admin-notices" style="display: none;">
+        <div class="card" style="padding: 2rem;">
+          <div class="flex justify-between items-center" style="margin-bottom: 1.5rem;">
+            <h3>Broadcast Announcements & Circulars</h3>
+            <button class="btn btn-sm btn-primary" onclick="openAddNoticeModal()">+ Create Announcement</button>
+          </div>
+
+          <div id="adminNoticesList">
+            <!-- Notices loaded here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 8: REPORTS & EXPORTS -->
+      <section id="panel-admin-reports" style="display: none;">
+        <div class="grid grid-2 gap-3">
+          <div class="card" style="padding: 2rem;">
+            <h3>Room Inventory & Occupancy Audit</h3>
+            <p style="margin: 0.5rem 0 1.25rem 0;">Download a complete CSV datasheet covering all 240 rooms across Blocks A-D, including AC/Non-AC status, bed occupancy, rent, and maintenance flags.</p>
+            <button class="btn btn-primary" onclick="exportDataCSV('rooms')">Download Rooms Inventory CSV ➔</button>
+          </div>
+
+          <div class="card" style="padding: 2rem;">
+            <h3>Resident Students Roster</h3>
+            <p style="margin: 0.5rem 0 1.25rem 0;">Export the full student roster with contact details, parent phone numbers, departments, allocated beds, and payment records.</p>
+            <button class="btn btn-primary" onclick="exportDataCSV('students')">Download Student Roster CSV ➔</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Add Room Modal -->
+  <div class="modal-overlay" id="addRoomModal">
+    <div class="modal" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3>Add New Hostel Room</h3>
+        <button class="modal-close" onclick="closeAddRoomModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="addRoomForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Block</label>
+              <select id="newBlock" class="form-control" required>
+                <option value="Block A">Block A</option>
+                <option value="Block B">Block B</option>
+                <option value="Block C">Block C</option>
+                <option value="Block D">Block D</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Floor (1-6)</label>
+              <input type="number" id="newFloor" class="form-control" min="1" max="6" value="1" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Room Number</label>
+            <input type="number" id="newRoomNum" class="form-control" placeholder="e.g. 111" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Room Type</label>
+              <select id="newType" class="form-control">
+                <option value="AC">AC</option>
+                <option value="Non-AC">Non-AC</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Bathroom</label>
+              <select id="newBath" class="form-control">
+                <option value="Attached">Attached</option>
+                <option value="Common">Common</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Monthly Rent (INR)</label>
+            <input type="number" id="newRent" class="form-control" value="8500" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeAddRoomModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitNewRoom()">Create Room ➔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Post Notice Modal -->
+  <div class="modal-overlay" id="addNoticeModal">
+    <div class="modal" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3>Broadcast Hostel Announcement</h3>
+        <button class="modal-close" onclick="closeAddNoticeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="addNoticeForm">
+          <div class="form-group">
+            <label>Announcement Title *</label>
+            <input type="text" id="noticeTitle" class="form-control" placeholder="e.g. Water Pipeline Cleaning on Sunday" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category</label>
+              <select id="noticeCategory" class="form-control">
+                <option value="General">General</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="Event">Event</option>
+                <option value="Regulation">Regulation</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Priority</label>
+              <select id="noticePriority" class="form-control">
+                <option value="Normal">Normal</option>
+                <option value="High">High</option>
+                <option value="Urgent">Urgent</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Notice Content *</label>
+            <textarea id="noticeContent" class="form-control" rows="4" placeholder="Enter notice details for student dashboards..." required></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeAddNoticeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitNewNotice()">Publish Announcement</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    let adminStats = null;
+
+    function switchAdminTab(tab) {
+      const tabs = ['overview', 'rooms', 'bookings', 'students', 'vacating', 'complaints', 'notices', 'reports'];
+      tabs.forEach(t => {
+        const link = document.getElementById(`tab-admin-${t}`);
+        const panel = document.getElementById(`panel-admin-${t}`);
+        if (link) link.classList.toggle('active', t === tab);
+        if (panel) panel.style.display = t === tab ? 'block' : 'none';
+      });
+
+      if (tab === 'rooms') loadAdminRoomsTable();
+      if (tab === 'bookings') loadAdminBookings();
+      if (tab === 'students') loadAdminStudents();
+      if (tab === 'vacating') loadAdminVacating();
+      if (tab === 'complaints') loadAdminComplaints();
+      if (tab === 'notices') loadAdminNotices();
+    }
+
+    async function initAdminPortal() {
+      const admin = HostelAuth.requireAuth('admin');
+      if (!admin) return;
+
+      document.getElementById('adminSidebarName').innerText = admin.name;
+      document.getElementById('adminSidebarAvatar').src = admin.profile_photo || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300&q=80';
+
+      await loadOverviewStats();
+    }
+
+    async function loadOverviewStats() {
+      adminStats = await HostelDB.getStats();
+      if (!adminStats) return;
+
+      document.getElementById('statTotalRooms').innerText = adminStats.total_rooms || 240;
+      document.getElementById('statCapacity').innerText = (adminStats.total_capacity || 1200).toLocaleString();
+      document.getElementById('statOccupiedBeds').innerText = adminStats.occupied_beds || 0;
+      document.getElementById('statOccRate').innerText = `${adminStats.occupancy_rate || 0}%`;
+      document.getElementById('statAvailBeds').innerText = adminStats.available_beds || 0;
+      document.getElementById('statAcVsNonAc').innerText = `${adminStats.ac_rooms || 120} / ${adminStats.non_ac_rooms || 120}`;
+      document.getElementById('statPendingBookings').innerText = adminStats.pending_bookings || 0;
+      document.getElementById('statActiveComplaints').innerText = adminStats.pending_complaints || 0;
+      document.getElementById('statRevenue').innerText = `₹${(adminStats.total_revenue || 0).toLocaleString()}`;
+
+      document.getElementById('sidebarPendingCount').innerText = adminStats.pending_bookings || 0;
+      document.getElementById('sidebarVacateCount').innerText = adminStats.vacating_requests || 0;
+      document.getElementById('sidebarComplaintCount').innerText = adminStats.pending_complaints || 0;
+    }
+
+    function filterRoomsByBlock(block) {
+      document.getElementById('adminBlockFilter').value = block;
+      switchAdminTab('rooms');
+    }
+
+    async function loadAdminRoomsTable() {
+      const block = document.getElementById('adminBlockFilter').value;
+      const floor = document.getElementById('adminFloorFilter').value;
+      const status = document.getElementById('adminStatusFilter').value;
+      const search = document.getElementById('adminRoomSearch').value;
+
+      const rooms = await HostelDB.getRooms({ block, floor, status, search });
+      const tbody = document.getElementById('adminRoomsTbody');
+
+      tbody.innerHTML = rooms.map(r => {
+        let badgeClass = 'badge-available';
+        if (r.status === 'Partially Occupied') badgeClass = 'badge-partial';
+        if (r.status === 'Fully Occupied') badgeClass = 'badge-occupied';
+        if (r.status === 'Maintenance') badgeClass = 'badge-maintenance';
+
+        return `
+          <tr>
+            <td><strong>${r.id}</strong></td>
+            <td>${r.block}, Floor ${r.floor}</td>
+            <td><span class="badge ${r.room_type === 'AC' ? 'badge-ac' : 'badge-nonac'}">${r.room_type}</span></td>
+            <td>${r.bathroom_type}</td>
+            <td>
+              <strong>${r.occupied_beds}</strong> / 5 Beds
+              <small style="color: var(--text-muted);">(${r.available_beds} free)</small>
+            </td>
+            <td>₹${r.rent.toLocaleString()}</td>
+            <td><span class="badge ${badgeClass}">${r.status}</span></td>
+            <td>
+              <div class="flex gap-1">
+                ${r.status === 'Maintenance' 
+                  ? `<button class="btn btn-sm btn-outline" onclick="toggleRoomMaintenance('${r.id}', 'Available')">Restore</button>` 
+                  : `<button class="btn btn-sm btn-secondary" onclick="toggleRoomMaintenance('${r.id}', 'Maintenance')">Maintenance</button>`}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function toggleRoomMaintenance(roomId, newStatus) {
+      if (confirm(`Set room ${roomId} to ${newStatus}?`)) {
+        await HostelDB.initLocalStore();
+        const rooms = JSON.parse(localStorage.getItem('hostel_rooms') || '[]');
+        const r = rooms.find(rm => rm.id === roomId);
+        if (r) {
+          r.status = newStatus;
+          r.available_beds = newStatus === 'Maintenance' ? 0 : Math.max(0, r.capacity - r.occupied_beds);
+          localStorage.setItem('hostel_rooms', JSON.stringify(rooms));
+          showToast(`Room ${roomId} updated to ${newStatus}`, 'success');
+          loadAdminRoomsTable();
+          loadOverviewStats();
+        }
+      }
+    }
+
+    async function loadAdminBookings() {
+      const students = await HostelDB.getStudents({ status: 'Pending Approval' });
+      const tbody = document.getElementById('adminBookingsTbody');
+      if (students.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2rem;">No pending booking requests.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = students.map(s => `
+        <tr>
+          <td><strong>${s.id}</strong></td>
+          <td>${s.name}</td>
+          <td>${s.mobile}</td>
+          <td>${s.department} (${s.year})</td>
+          <td>${s.block} Floor ${s.floor}</td>
+          <td>${s.checkin_date}</td>
+          <td><span class="badge badge-pending">Pending</span></td>
+          <td>
+            <div class="flex gap-1">
+              <button class="btn btn-sm btn-primary" onclick="approveStudentBooking('${s.id}')">Approve & Allocate Bed</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function approveStudentBooking(studentId) {
+      const students = await HostelDB.getStudents();
+      const s = students.find(u => u.id === studentId);
+      if (!s) return;
+
+      const availRooms = await HostelDB.getRooms({ block: s.block || 'Block A', floor: s.floor || 1 });
+      const targetRoom = availRooms.find(r => r.available_beds > 0 && r.status !== 'Maintenance');
+
+      if (!targetRoom) {
+        showToast('No vacant room available on that floor. Reassign manually.', 'error');
+        return;
+      }
+
+      const res = await HostelDB.bookRoom({
+        student_id: s.id,
+        student_name: s.name,
+        room_id: targetRoom.id,
+        checkin_date: s.checkin_date
+      });
+
+      if (res.success) {
+        showToast(`Approved! Allocated ${targetRoom.id} (Bed #${res.bed_number})`, 'success');
+        loadAdminBookings();
+        loadOverviewStats();
+      }
+    }
+
+    async function loadAdminStudents() {
+      const status = document.getElementById('studentStatusFilter').value;
+      const search = document.getElementById('studentSearchInput').value;
+      const students = await HostelDB.getStudents({ status, search });
+      const tbody = document.getElementById('adminStudentsTbody');
+
+      tbody.innerHTML = students.map(s => `
+        <tr>
+          <td>
+            <strong>${s.name}</strong><br>
+            <small style="color: var(--text-muted);">${s.id} • ${s.email}</small>
+          </td>
+          <td>${s.college || 'NIT'}<br><small>${s.department} (${s.year})</small></td>
+          <td><strong>${s.room_id || 'Not Assigned'}</strong></td>
+          <td>${s.bed_number ? `Bed #${s.bed_number}` : '-'}</td>
+          <td>${s.mobile}</td>
+          <td><span class="badge ${s.status === 'Active' ? 'badge-available' : s.status === 'Vacated' ? 'badge-maintenance' : 'badge-pending'}">${s.status}</span></td>
+          <td><small>${s.checkin_date || 'N/A'}</small></td>
+          <td>
+            <button class="btn btn-sm btn-outline" onclick="alert('Student Dossier:\\nName: ${s.name}\\nPhone: ${s.mobile}\\nParent: ${s.parent_name} (${s.parent_contact})\\nAddress: ${s.address}')">
+              Dossier
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadAdminVacating() {
+      const students = await HostelDB.getStudents({ status: 'Vacating Requested' });
+      const tbody = document.getElementById('adminVacatingTbody');
+      if (students.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">No pending vacating notices.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = students.map(s => `
+        <tr>
+          <td><strong>${s.name}</strong> (${s.id})</td>
+          <td>${s.room_id} (Bed #${s.bed_number})</td>
+          <td><strong style="color: #c2410c;">${s.vacating_date}</strong></td>
+          <td>${s.vacating_reason || 'Course Completed'}</td>
+          <td><span class="badge badge-partial">Under Review</span></td>
+          <td>
+            <button class="btn btn-sm btn-danger" onclick="approveStudentVacate('${s.id}', '${s.name}', '${s.room_id}')">
+              Approve Checkout & Free Bed ➔
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function approveStudentVacate(studentId, name, roomId) {
+      if (confirm(`Approve checkout for ${name}? This will free up their bed in ${roomId} and update the live room availability.`)) {
+        const res = await HostelDB.approveVacate(studentId);
+        if (res.success) {
+          showToast(res.message, 'success');
+          loadAdminVacating();
+          loadOverviewStats();
+        } else {
+          showToast('Failed to approve checkout', 'error');
+        }
+      }
+    }
+
+    async function loadAdminComplaints() {
+      const complaints = await HostelDB.getComplaints();
+      const tbody = document.getElementById('adminComplaintsTbody');
+      tbody.innerHTML = complaints.map(c => `
+        <tr>
+          <td><strong>${c.id}</strong></td>
+          <td>${c.student_name}<br><small style="color: var(--text-muted);">${c.room_id}</small></td>
+          <td><span class="badge badge-ac">${c.category}</span></td>
+          <td><strong>${c.priority}</strong></td>
+          <td>
+            <strong>${c.title}</strong><br>
+            <small style="color: var(--text-muted);">${c.description.substring(0, 50)}...</small>
+          </td>
+          <td><span class="badge ${c.status === 'Resolved' ? 'badge-resolved' : c.status === 'In Progress' ? 'badge-partial' : 'badge-pending'}">${c.status}</span></td>
+          <td><small>${c.created_at || 'Recently'}</small></td>
+          <td>
+            <button class="btn btn-sm btn-outline" onclick="adminQuickResolve('${c.id}')">
+              ${c.status === 'Resolved' ? 'Reopen' : 'Mark Resolved'}
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function adminQuickResolve(ticketId) {
+      const remarks = prompt("Enter resolution notes:", "Issue inspected and fixed by maintenance team.");
+      if (remarks !== null) {
+        const res = await HostelDB.updateComplaint(ticketId, 'Resolved', remarks);
+        if (res.success) {
+          showToast(`Ticket ${ticketId} resolved`, 'success');
+          loadAdminComplaints();
+          loadOverviewStats();
+        }
+      }
+    }
+
+    async function loadAdminNotices() {
+      const notices = await HostelDB.getNotices();
+      const container = document.getElementById('adminNoticesList');
+      container.innerHTML = notices.map(n => `
+        <div style="background: var(--bg-alt); padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 1rem; border-left: 4px solid var(--primary);">
+          <div class="flex justify-between items-center" style="margin-bottom: 0.5rem;">
+            <div class="flex items-center gap-1">
+              <span class="badge ${n.priority === 'Urgent' ? 'badge-occupied' : 'badge-ac'}">${n.priority}</span>
+              <span class="badge badge-nonac">${n.category}</span>
+              <strong>${n.title}</strong>
+            </div>
+            <button class="btn btn-sm btn-secondary" style="color: red;" onclick="deleteNotice('${n.id}')">Delete</button>
+          </div>
+          <p style="font-size: 0.9rem;">${n.content}</p>
+          <small style="color: var(--text-muted);">Published on: ${n.date} by ${n.author}</small>
+        </div>
+      `).join('');
+    }
+
+    async function deleteNotice(id) {
+      if (confirm('Delete this notice?')) {
+        await HostelDB.deleteNotice(id);
+        showToast('Notice deleted', 'info');
+        loadAdminNotices();
+      }
+    }
+
+    function openAddRoomModal() {
+      document.getElementById('addRoomModal').classList.add('open');
+    }
+    function closeAddRoomModal() {
+      document.getElementById('addRoomModal').classList.remove('open');
+    }
+
+    async function submitNewRoom() {
+      const block = document.getElementById('newBlock').value;
+      const floor = parseInt(document.getElementById('newFloor').value);
+      const roomNum = parseInt(document.getElementById('newRoomNum').value);
+      const type = document.getElementById('newType').value;
+      const bath = document.getElementById('newBath').value;
+      const rent = parseInt(document.getElementById('newRent').value);
+
+      const roomId = `${block.replace(' ', '')}-${roomNum}`;
+
+      await HostelDB.initLocalStore();
+      const rooms = JSON.parse(localStorage.getItem('hostel_rooms') || '[]');
+      if (rooms.some(r => r.id === roomId)) {
+        showToast('Room ID already exists!', 'error');
+        return;
+      }
+
+      rooms.push({
+        id: roomId,
+        block,
+        floor,
+        room_number: roomNum,
+        capacity: 5,
+        occupied_beds: 0,
+        available_beds: 5,
+        room_type: type,
+        bathroom_type: bath,
+        rent,
+        deposit: 10000,
+        status: 'Available',
+        facilities: ['High-Speed Wi-Fi', 'Study Desk', 'Wardrobe', 'Power Backup'],
+        image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80',
+        description: `Newly commissioned 5-sharing room in ${block}.`
+      });
+
+      localStorage.setItem('hostel_rooms', JSON.stringify(rooms));
+      showToast(`Room ${roomId} created successfully!`, 'success');
+      closeAddRoomModal();
+      loadAdminRoomsTable();
+      loadOverviewStats();
+    }
+
+    function openAddNoticeModal() {
+      document.getElementById('addNoticeModal').classList.add('open');
+    }
+    function closeAddNoticeModal() {
+      document.getElementById('addNoticeModal').classList.remove('open');
+    }
+
+    async function submitNewNotice() {
+      const title = document.getElementById('noticeTitle').value;
+      const category = document.getElementById('noticeCategory').value;
+      const priority = document.getElementById('noticePriority').value;
+      const content = document.getElementById('noticeContent').value;
+
+      if (!title || !content) return;
+
+      const res = await HostelDB.addNotice({
+        title,
+        category,
+        priority,
+        content,
+        author: 'Chief Warden Office'
+      });
+
+      if (res.success) {
+        showToast('Announcement broadcasted to student portals', 'success');
+        closeAddNoticeModal();
+        loadAdminNotices();
+      }
+    }
+
+    async function exportDataCSV(type) {
+      if (type === 'rooms') {
+        const rooms = await HostelDB.getRooms();
+        let csv = 'RoomID,Block,Floor,RoomNumber,Capacity,OccupiedBeds,AvailableBeds,RoomType,BathroomType,MonthlyRent,Status\n';
+        rooms.forEach(r => {
+          csv += `"${r.id}","${r.block}",${r.floor},${r.room_number},${r.capacity},${r.occupied_beds},${r.available_beds},"${r.room_type}","${r.bathroom_type}",${r.rent},"${r.status}"\n`;
+        });
+        downloadCSV(csv, 'Hostel_240_Rooms_Audit.csv');
+      } else if (type === 'students') {
+        const students = await HostelDB.getStudents();
+        let csv = 'StudentID,Name,Email,Mobile,Gender,College,Department,Year,RoomID,BedNumber,MonthlyRent,Status,CheckinDate\n';
+        students.forEach(s => {
+          csv += `"${s.id}","${s.name}","${s.email}","${s.mobile}","${s.gender}","${s.college}","${s.department}","${s.year}","${s.room_id || ''}",${s.bed_number || ''},${s.monthly_rent || 0},"${s.status}","${s.checkin_date || ''}"\n`;
+        });
+        downloadCSV(csv, 'Hostel_Students_Roster.csv');
+      }
+    }
+
+    function downloadCSV(csvContent, fileName) {
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast(`Exported ${fileName}`, 'success');
+    }
+
+    document.addEventListener('DOMContentLoaded', initAdminPortal);
+  </script>
+</body>
+</html>

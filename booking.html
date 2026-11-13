@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Room & Bed Online Booking - Hostel Booking and Management System</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .booking-wrapper {
+      padding: 3rem 0;
+      background: var(--bg-alt);
+    }
+    .booking-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    .bed-picker-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    .bed-option-btn {
+      padding: 1rem 0.5rem;
+      text-align: center;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background: #ffffff;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .bed-option-btn:hover:not(.disabled) {
+      border-color: var(--primary-light);
+      background: #eff6ff;
+    }
+    .bed-option-btn.selected {
+      border-color: var(--primary);
+      background: #eff6ff;
+      box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.2);
+    }
+    .bed-option-btn.disabled {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.95rem;
+    }
+    .price-total {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--primary);
+      border-top: 2px solid var(--border-color);
+      border-bottom: none;
+      padding-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">🏢</div>
+        Hostel<span>Master</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="rooms.html">Rooms & Blocks</a></li>
+        <li><a href="facilities.html">Facilities</a></li>
+        <li><a href="complaints.html">Complaints</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </header>
+
+  <div class="booking-wrapper">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 2.5rem;">
+        <span class="badge badge-ac">Secure Online Reservation</span>
+        <h2 style="margin-top: 0.5rem;">Confirm Room & Bed Booking</h2>
+        <p>Review your room specifications, pick your vacant bed, and complete payment to confirm allocation.</p>
+      </div>
+
+      <!-- Auth Warning Banner if user not logged in -->
+      <div id="authPromptBanner" style="display: none; background: #fffbeb; border: 1px solid #fef3c7; border-left: 4px solid var(--accent); padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 2rem;">
+        <div class="flex justify-between items-center" style="flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <strong style="color: #92400e;">⚠️ Login Required for Bed Allotment</strong>
+            <p style="font-size: 0.88rem; color: #b45309; margin: 0;">You must be logged in as an active student to link your bed allotment to your resident file.</p>
+          </div>
+          <div class="flex gap-1">
+            <a href="login.html" class="btn btn-sm btn-primary">Login Now</a>
+            <a href="register.html" class="btn btn-sm btn-secondary">New Student Register</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="booking-grid">
+        <!-- Left: Room & Bed Selector -->
+        <div class="card" style="padding: 2.5rem;">
+          <h3 style="margin-bottom: 1.25rem;">1. Select Room & Block</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="selectBlock">Choose Block</label>
+              <select id="selectBlock" class="form-control" onchange="onBlockFloorChange()">
+                <option value="Block A">Block A (Boys Alpha)</option>
+                <option value="Block B">Block B (Boys Beta)</option>
+                <option value="Block C">Block C (Girls Gamma)</option>
+                <option value="Block D">Block D (Girls Delta)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="selectFloor">Choose Floor (1-6)</label>
+              <select id="selectFloor" class="form-control" onchange="onBlockFloorChange()">
+                <option value="1">Floor 1 (Ground)</option>
+                <option value="2">Floor 2</option>
+                <option value="3">Floor 3</option>
+                <option value="4">Floor 4</option>
+                <option value="5">Floor 5</option>
+                <option value="6">Floor 6</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="selectRoom">Select Specific Room</label>
+            <select id="selectRoom" class="form-control" onchange="onRoomSelected()">
+              <!-- Options loaded dynamically -->
+            </select>
+          </div>
+
+          <!-- Room Preview Card -->
+          <div id="roomPreviewContainer" style="margin-top: 1.5rem; background: var(--bg-alt); border-radius: var(--radius-md); padding: 1.25rem; display: flex; gap: 1.25rem; align-items: center;">
+            <img id="previewRoomImg" src="" style="width: 120px; height: 90px; border-radius: var(--radius-sm); object-fit: cover;" alt="Room">
+            <div style="flex-grow: 1;">
+              <div class="flex justify-between items-center">
+                <h4 id="previewRoomTitle" style="font-size: 1.1rem;">Room A-101</h4>
+                <span id="previewRoomBadge" class="badge">Available</span>
+              </div>
+              <div style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0;" id="previewRoomSpecs">
+                AC • Attached Bathroom • Capacity: 5
+              </div>
+              <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary);" id="previewRoomAvail">
+                4 Beds Available
+              </div>
+            </div>
+          </div>
+
+          <!-- Bed Allocation Grid -->
+          <h3 style="margin: 2rem 0 0.5rem 0;">2. Select Bed Number (1 to 5)</h3>
+          <p style="font-size: 0.88rem; margin-bottom: 1rem;">Choose which vacant bed position inside this 5-sharing room you want to occupy:</p>
+
+          <div class="bed-picker-grid" id="bedPickerContainer">
+            <!-- 5 bed buttons generated here -->
+          </div>
+
+          <div class="form-group" style="margin-top: 1.5rem;">
+            <label for="bookingCheckinDate">Check-In Date *</label>
+            <input type="date" id="bookingCheckinDate" class="form-control" required>
+          </div>
+        </div>
+
+        <!-- Right: Pricing Breakdown & Payment Portal -->
+        <div class="card" style="padding: 2.5rem; position: sticky; top: 90px;">
+          <h3 style="margin-bottom: 1.25rem;">Payment & Rent Summary</h3>
+
+          <div class="price-row">
+            <span>First Month Rent (<span id="summaryRoomType">AC Attached</span>)</span>
+            <span id="summaryRent">₹9,500</span>
+          </div>
+
+          <div class="price-row">
+            <span>Refundable Security Deposit</span>
+            <span id="summaryDeposit">₹10,000</span>
+          </div>
+
+          <div class="price-row">
+            <span>Hostel Maintenance & Wi-Fi Fee</span>
+            <span style="color: var(--status-available);">Included (Free)</span>
+          </div>
+
+          <div class="price-row price-total">
+            <span>Total Payable Amount</span>
+            <span id="summaryTotal">₹19,500</span>
+          </div>
+
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 0.75rem 1rem; border-radius: var(--radius-sm); font-size: 0.8rem; margin: 1.5rem 0;">
+            ✓ 100% Refundable Security Deposit upon official vacating checkout.
+          </div>
+
+          <button type="button" class="btn btn-lg btn-primary" style="width: 100%;" id="payProceedBtn" onclick="openPaymentGateway()">
+            Proceed to Payment & Confirm Bed ➔
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demo Payment Gateway Modal -->
+  <div class="modal-overlay" id="paymentModal">
+    <div class="modal" style="max-width: 500px;">
+      <div class="modal-header">
+        <div class="flex items-center gap-1">
+          <span style="font-size: 1.3rem;">💳</span>
+          <h3 style="font-size: 1.15rem;">Hostel Online Payment Gateway</h3>
+        </div>
+        <button class="modal-close" onclick="closePaymentModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="background: #fffbeb; border: 1px solid #fde68a; color: #92400e; padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 1.25rem;">
+          ⚙️ <strong>Demo Gateway Active:</strong> Simulated payment portal. No actual financial transaction or bank deduction will take place.
+        </div>
+
+        <div style="text-align: center; margin-bottom: 1.5rem; background: var(--bg-alt); padding: 1rem; border-radius: var(--radius-md);">
+          <div style="font-size: 0.85rem; color: var(--text-muted);">Amount to Pay</div>
+          <div style="font-size: 2rem; font-weight: 800; color: var(--primary);" id="modalPayAmount">₹19,500</div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);" id="modalPayDesc">Room Allocation Bed Allotment</div>
+        </div>
+
+        <div class="form-group">
+          <label>Select Payment Method</label>
+          <div class="flex gap-1" style="margin-bottom: 1rem;">
+            <button type="button" class="btn btn-sm btn-outline active" style="flex: 1;" onclick="setPayMethod('UPI / QR')">UPI / QR</button>
+            <button type="button" class="btn btn-sm btn-outline" style="flex: 1;" onclick="setPayMethod('Credit/Debit Card')">Card</button>
+            <button type="button" class="btn btn-sm btn-outline" style="flex: 1;" onclick="setPayMethod('Net Banking')">Net Banking</button>
+          </div>
+        </div>
+
+        <div id="upiSection" style="text-align: center; padding: 1rem; border: 1px dashed var(--border-color); border-radius: var(--radius-md);">
+          <div style="font-size: 3rem; margin-bottom: 0.5rem;">📱</div>
+          <p style="font-size: 0.9rem; font-weight: 600;">Scan QR using PhonePe, Google Pay, or Paytm</p>
+          <small style="color: var(--text-muted);">UPI ID: hostelmaster@upi (Auto-verified)</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closePaymentModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmPaymentBtn" onclick="executeBookingPayment()">Confirm & Authorize Payment ➔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Booking Success & Printable Receipt Modal -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal" style="max-width: 700px;">
+      <div class="modal-header">
+        <div class="flex items-center gap-1">
+          <span style="font-size: 1.4rem;">🎉</span>
+          <h3>Bed Allotment Confirmed!</h3>
+        </div>
+        <button class="modal-close" onclick="closeSuccessModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+          <span class="badge badge-available" style="font-size: 0.9rem; padding: 0.4rem 1rem;">Allotment Verified</span>
+          <h3 style="margin-top: 0.5rem;">Welcome to Your New Campus Room!</h3>
+          <p>Your room and bed have been officially registered. You can print or download your payment receipt below.</p>
+        </div>
+
+        <!-- Receipt Area (Printable) -->
+        <div class="receipt-wrapper" id="printableReceipt">
+          <div class="receipt-header">
+            <div class="brand-logo" style="justify-content: center; margin-bottom: 0.5rem;">
+              <div class="brand-icon">🏢</div>
+              Hostel<span>Master</span>
+            </div>
+            <h4 style="margin: 0; font-size: 1.1rem;">CAMPUS RESIDENCY FEE RECEIPT</h4>
+            <small style="color: var(--text-muted);">Official Tax Invoice & Bed Allocation Voucher</small>
+          </div>
+
+          <div class="grid grid-2 gap-2" style="font-size: 0.9rem; margin-bottom: 1rem;">
+            <div>
+              <strong>Receipt No:</strong> <span id="recNo">INV-2026-9921</span><br>
+              <strong>Transaction ID:</strong> <span id="recTxn">TXN-88491023</span><br>
+              <strong>Date & Time:</strong> <span id="recDate">13-Nov-2026 15:30</span>
+            </div>
+            <div>
+              <strong>Student Name:</strong> <span id="recName">Rahul Sharma</span><br>
+              <strong>Student ID:</strong> <span id="recId">STU-102</span><br>
+              <strong>Allocated Bed:</strong> <span id="recBed" style="color: var(--primary); font-weight: 700;">Bed #3, Room A-101</span>
+            </div>
+          </div>
+
+          <table class="receipt-table">
+            <thead>
+              <tr>
+                <th style="text-align: left;">Description</th>
+                <th style="text-align: right;">Amount (INR)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Monthly Hostel Accommodation (<span id="recType">AC Attached</span>)</td>
+                <td style="text-align: right;" id="recRent">₹9,500.00</td>
+              </tr>
+              <tr>
+                <td>Refundable Hostel Security Deposit</td>
+                <td style="text-align: right;" id="recDeposit">₹10,000.00</td>
+              </tr>
+              <tr>
+                <td><strong>Total Paid (Inclusive of Taxes)</strong></td>
+                <td style="text-align: right;"><strong id="recTotal">₹19,500.00</strong></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 1.5rem; font-size: 0.85rem;">
+            <div>
+              <p><strong>Payment Mode:</strong> <span id="recMethod">UPI Online</span></p>
+              <p><strong>Status:</strong> <span style="color: var(--status-available); font-weight: 700;">PAID (Verified)</span></p>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-family: cursive; font-size: 1.2rem; color: #1e3a8a;">Dr. Rajesh Verma</div>
+              <div style="border-top: 1px solid #000; padding-top: 2px;">Chief Hostel Warden</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer no-print">
+        <button type="button" class="btn btn-secondary" onclick="printReceipt()">🖨️ Print / Save PDF Receipt</button>
+        <button type="button" class="btn btn-primary" onclick="goToStudentDashboard()">Go to Student Dashboard ➔</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    let currentRooms = [];
+    let selectedRoom = null;
+    let selectedBedNumber = 1;
+    let chosenPaymentMethod = 'UPI / QR';
+
+    // Set default checkin date
+    const checkinInput = document.getElementById('bookingCheckinDate');
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    checkinInput.value = tomorrow.toISOString().split('T')[0];
+
+    async function initBookingPage() {
+      const user = HostelAuth.getUser();
+      if (!user) {
+        document.getElementById('authPromptBanner').style.display = 'block';
+      }
+
+      // Check query parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const prefillRoomId = urlParams.get('room');
+
+      if (prefillRoomId) {
+        const parts = prefillRoomId.split('-');
+        const blockName = parts[0].replace('Block', 'Block ');
+        const roomNum = parseInt(parts[1]);
+        const floorNum = Math.floor(roomNum / 100);
+
+        document.getElementById('selectBlock').value = blockName;
+        document.getElementById('selectFloor').value = floorNum;
+      }
+
+      await onBlockFloorChange(prefillRoomId);
+    }
+
+    async function onBlockFloorChange(targetRoomId = null) {
+      const block = document.getElementById('selectBlock').value;
+      const floor = parseInt(document.getElementById('selectFloor').value);
+
+      currentRooms = await HostelDB.getRooms({ block, floor });
+      const selectRoom = document.getElementById('selectRoom');
+
+      selectRoom.innerHTML = currentRooms.map(r => {
+        const disabled = r.status === 'Fully Occupied' || r.status === 'Maintenance';
+        return `
+          <option value="${r.id}" ${disabled ? 'disabled style="color: #999;"' : ''} ${targetRoomId === r.id ? 'selected' : ''}>
+            Room ${r.room_number} (${r.room_type}, ${r.bathroom_type} Bath) - ${r.status} (${r.available_beds} beds free)
+          </option>
+        `;
+      }).join('');
+
+      if (targetRoomId) {
+        selectRoom.value = targetRoomId;
+      }
+
+      onRoomSelected();
+    }
+
+    async function onRoomSelected() {
+      const roomId = document.getElementById('selectRoom').value;
+      if (!roomId) return;
+
+      selectedRoom = await HostelDB.getRoomById(roomId);
+      if (!selectedRoom) return;
+
+      // Update room preview
+      document.getElementById('previewRoomImg').src = selectedRoom.image;
+      document.getElementById('previewRoomTitle').innerText = `${selectedRoom.block} - Room ${selectedRoom.room_number}`;
+      document.getElementById('previewRoomSpecs').innerText = `${selectedRoom.room_type} Room • ${selectedRoom.bathroom_type} Bathroom • Rent: ₹${selectedRoom.rent.toLocaleString()}/mo`;
+      document.getElementById('previewRoomAvail').innerText = `${selectedRoom.available_beds} of 5 Beds Available`;
+
+      const badge = document.getElementById('previewRoomBadge');
+      badge.className = `badge ${selectedRoom.status === 'Available' ? 'badge-available' : selectedRoom.status === 'Partially Occupied' ? 'badge-partial' : selectedRoom.status === 'Maintenance' ? 'badge-maintenance' : 'badge-occupied'}`;
+      badge.innerText = selectedRoom.status;
+
+      // Update pricing summary
+      document.getElementById('summaryRoomType').innerText = `${selectedRoom.room_type} ${selectedRoom.bathroom_type}`;
+      document.getElementById('summaryRent').innerText = `₹${selectedRoom.rent.toLocaleString()}`;
+      document.getElementById('summaryDeposit').innerText = `₹${selectedRoom.deposit.toLocaleString()}`;
+      const total = selectedRoom.rent + selectedRoom.deposit;
+      document.getElementById('summaryTotal').innerText = `₹${total.toLocaleString()}`;
+      document.getElementById('modalPayAmount').innerText = `₹${total.toLocaleString()}`;
+
+      // Render 5 Bed Buttons
+      const occupants = selectedRoom.occupants || [];
+      const container = document.getElementById('bedPickerContainer');
+      let bedsHtml = '';
+      let firstAvailBed = null;
+
+      for (let b = 1; b <= 5; b++) {
+        const occ = occupants.find(u => u.bed_number === b);
+        if (occ) {
+          bedsHtml += `
+            <div class="bed-option-btn disabled" title="Reserved by ${occ.name}">
+              <span>🛏️</span>
+              <strong>Bed #${b}</strong>
+              <small style="color: #991b1b; font-size: 0.7rem;">Occupied</small>
+            </div>
+          `;
+        } else {
+          if (!firstAvailBed) firstAvailBed = b;
+          bedsHtml += `
+            <div class="bed-option-btn ${selectedBedNumber === b ? 'selected' : ''}" onclick="pickBed(${b})">
+              <span>🛏️</span>
+              <strong>Bed #${b}</strong>
+              <small style="color: #065f46; font-size: 0.7rem;">Vacant</small>
+            </div>
+          `;
+        }
+      }
+      container.innerHTML = bedsHtml;
+      if (firstAvailBed && !occupants.some(u => u.bed_number === selectedBedNumber)) {
+        selectedBedNumber = firstAvailBed;
+      }
+    }
+
+    function pickBed(b) {
+      selectedBedNumber = b;
+      document.querySelectorAll('.bed-option-btn').forEach((btn, idx) => {
+        if (!btn.classList.contains('disabled')) {
+          btn.classList.toggle('selected', (idx + 1) === b);
+        }
+      });
+      showToast(`Selected Bed #${b}`, 'info');
+    }
+
+    function setPayMethod(method) {
+      chosenPaymentMethod = method;
+      document.querySelectorAll('#paymentModal .btn-outline').forEach(b => {
+        b.classList.toggle('active', b.innerText.includes(method.split(' ')[0]));
+      });
+    }
+
+    function openPaymentGateway() {
+      const user = HostelAuth.getUser();
+      if (!user) {
+        showToast('Please log in or register before booking a bed', 'error');
+        setTimeout(() => window.location.href = 'login.html', 1000);
+        return;
+      }
+      if (!selectedRoom || selectedRoom.available_beds <= 0) {
+        showToast('No beds available in selected room', 'error');
+        return;
+      }
+
+      document.getElementById('modalPayDesc').innerText = `${selectedRoom.block} Room ${selectedRoom.room_number} (Bed #${selectedBedNumber})`;
+      document.getElementById('paymentModal').classList.add('open');
+    }
+
+    function closePaymentModal() {
+      document.getElementById('paymentModal').classList.remove('open');
+    }
+
+    async function executeBookingPayment() {
+      const user = HostelAuth.getUser();
+      const confirmBtn = document.getElementById('confirmPaymentBtn');
+      confirmBtn.disabled = true;
+      confirmBtn.innerText = 'Processing Gateway Demo...';
+
+      const bookingPayload = {
+        student_id: user.id,
+        student_name: user.name,
+        room_id: selectedRoom.id,
+        bed_number: selectedBedNumber,
+        checkin_date: document.getElementById('bookingCheckinDate').value,
+        payment_method: chosenPaymentMethod
+      };
+
+      try {
+        const res = await HostelDB.bookRoom(bookingPayload);
+        if (res.success) {
+          closePaymentModal();
+          showSuccessReceipt(res);
+        } else {
+          showToast(res.error || 'Booking failed', 'error');
+          confirmBtn.disabled = false;
+          confirmBtn.innerText = 'Confirm & Authorize Payment ➔';
+        }
+      } catch (err) {
+        showToast('Error booking room', 'error');
+        confirmBtn.disabled = false;
+        confirmBtn.innerText = 'Confirm & Authorize Payment ➔';
+      }
+    }
+
+    function showSuccessReceipt(res) {
+      const user = HostelAuth.getUser();
+      const now = new Date();
+      const txn = `TXN-${Math.floor(10000000 + Math.random() * 90000000)}`;
+      const inv = `INV-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      document.getElementById('recNo').innerText = inv;
+      document.getElementById('recTxn').innerText = txn;
+      document.getElementById('recDate').innerText = now.toLocaleString();
+      document.getElementById('recName').innerText = user.name;
+      document.getElementById('recId').innerText = user.id;
+      document.getElementById('recBed').innerText = `Bed #${selectedBedNumber}, ${selectedRoom.block} Room ${selectedRoom.room_number}`;
+      document.getElementById('recType').innerText = `${selectedRoom.room_type} ${selectedRoom.bathroom_type}`;
+      document.getElementById('recRent').innerText = `₹${selectedRoom.rent.toLocaleString()}.00`;
+      document.getElementById('recDeposit').innerText = `₹${selectedRoom.deposit.toLocaleString()}.00`;
+      document.getElementById('recTotal').innerText = `₹${(selectedRoom.rent + selectedRoom.deposit).toLocaleString()}.00`;
+      document.getElementById('recMethod').innerText = chosenPaymentMethod;
+
+      document.getElementById('successModal').classList.add('open');
+      showToast('Bed successfully confirmed and receipt generated!', 'success');
+    }
+
+    function closeSuccessModal() {
+      document.getElementById('successModal').classList.remove('open');
+    }
+
+    function printReceipt() {
+      window.print();
+    }
+
+    function goToStudentDashboard() {
+      window.location.href = 'student-dashboard.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', initBookingPage);
+  </script>
+</body>
+</html>

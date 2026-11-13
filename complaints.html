@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hostel Complaint & Maintenance Portal - Hostel Booking and Management System</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .complaints-wrapper {
+      padding: 3rem 0;
+      background: var(--bg-alt);
+    }
+    .complaint-tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+    .c-tab {
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: var(--transition);
+    }
+    .c-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+    .ticket-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .ticket-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+    .photo-thumb {
+      width: 80px;
+      height: 80px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">🏢</div>
+        Hostel<span>Master</span>
+      </a>
+
+      <button class="menu-toggle" aria-label="Toggle navigation">☰</button>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="rooms.html">Rooms & Blocks</a></li>
+        <li><a href="facilities.html">Facilities</a></li>
+        <li><a href="complaints.html" class="active">Complaints</a></li>
+        <li><a href="booking.html">Book Online</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </header>
+
+  <div class="complaints-wrapper">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <span class="badge badge-ac">Hostel Care & Maintenance</span>
+        <h2 style="margin-top: 0.5rem;">Complaint Registration & Ticket Tracker</h2>
+        <p>Report any room, facility, electrical, plumbing, food, or security concerns directly to the warden office.</p>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="complaint-tabs">
+        <div class="c-tab active" id="tab-lodge" onclick="switchComplaintTab('lodge')">
+          📝 Register New Complaint
+        </div>
+        <div class="c-tab" id="tab-track" onclick="switchComplaintTab('track')">
+          🔍 Track Complaint History & Status (<span id="ticketCountBadge">0</span>)
+        </div>
+      </div>
+
+      <!-- TAB 1: Register New Complaint Form -->
+      <div id="sectionLodge">
+        <div class="card" style="max-width: 800px; margin: 0 auto; padding: 2.5rem;">
+          <form id="complaintForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cStudentName">Student Name *</label>
+                <input type="text" id="cStudentName" class="form-control" placeholder="e.g. Rahul Sharma" required>
+              </div>
+
+              <div class="form-group">
+                <label for="cRoomId">Allocated Room Number *</label>
+                <input type="text" id="cRoomId" class="form-control" placeholder="e.g. BlockA-201" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cCategory">Complaint Category *</label>
+                <select id="cCategory" class="form-control" required>
+                  <option value="">-- Choose Category --</option>
+                  <option value="Water problems">💧 Water problems (Plumbing, Geyser, Drinking Water)</option>
+                  <option value="Electricity problems">⚡ Electricity problems (Lighting, Outlets, AC, Fan)</option>
+                  <option value="Wi-Fi problems">📶 Wi-Fi problems (Speed drop, Connection, Router)</option>
+                  <option value="Bathroom cleaning">🧼 Bathroom cleaning & Hygiene</option>
+                  <option value="Room maintenance">🔨 Room maintenance (Bed, Lock, Window, Wardrobe)</option>
+                  <option value="Food quality">🍽️ Food quality & Mess hygiene</option>
+                  <option value="Security issues">🛡️ Security issues / Noise disturbance</option>
+                  <option value="Other complaints">📋 Other complaints</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="cPriority">Urgency Priority *</label>
+                <select id="cPriority" class="form-control" required>
+                  <option value="Low">Low (Informational)</option>
+                  <option value="Medium" selected>Medium (Standard 24-hr resolution)</option>
+                  <option value="High">High (Immediate today)</option>
+                  <option value="Emergency">🚨 Emergency (Requires urgent intervention)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="cTitle">Brief Subject / Issue Summary *</label>
+              <input type="text" id="cTitle" class="form-control" placeholder="e.g. Attached bathroom tap leaking continuously" required>
+            </div>
+
+            <div class="form-group">
+              <label for="cDescription">Detailed Description of the Issue *</label>
+              <textarea id="cDescription" class="form-control" rows="4" placeholder="Describe the issue, specific bed or area in room, when it started, and any symptoms..." required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="cPhoto">Upload Photo / Evidence (Optional)</label>
+              <input type="file" id="cPhoto" class="form-control" accept="image/*" onchange="previewComplaintPhoto(event)">
+              <div class="form-help">Attach a photo of the damaged fixture, leaking pipe, or error for faster resolution.</div>
+              <img id="complaintPhotoPreview" class="upload-preview" alt="Preview">
+            </div>
+
+            <button type="submit" class="btn btn-lg btn-primary" style="width: 100%; margin-top: 1rem;" id="submitComplaintBtn">
+              Submit Complaint to Warden Office ➔
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- TAB 2: View Complaint History & Status -->
+      <div id="sectionTrack" style="display: none;">
+        <div style="background: #ffffff; padding: 1.25rem 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color); margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div class="flex items-center gap-2">
+            <label style="font-weight: 600; font-size: 0.9rem;">Filter Status:</label>
+            <select id="filterStatusSelect" class="form-control" style="width: 180px;" onchange="loadComplaintsList()">
+              <option value="">All Statuses</option>
+              <option value="Pending">🟡 Pending</option>
+              <option value="In Progress">🟠 In Progress</option>
+              <option value="Resolved">🟢 Resolved</option>
+            </select>
+          </div>
+          <div>
+            <button class="btn btn-sm btn-secondary" onclick="loadComplaintsList()">↻ Refresh Tickets</button>
+          </div>
+        </div>
+
+        <div id="complaintsListContainer">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Admin Complaint Status Update Modal -->
+  <div class="modal-overlay" id="updateTicketModal">
+    <div class="modal" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3>Update Complaint Status</h3>
+        <button class="modal-close" onclick="closeUpdateModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="modalTicketId">
+        <div class="form-group">
+          <label>Status</label>
+          <select id="modalNewStatus" class="form-control">
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Admin Resolution Remarks</label>
+          <textarea id="modalAdminRemarks" class="form-control" rows="3" placeholder="Notes on technician visit, parts ordered, or completion details..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeUpdateModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveComplaintStatus()">Save Status Update</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    let complaintPhotoDataUrl = null;
+
+    function switchComplaintTab(tab) {
+      document.getElementById('tab-lodge').classList.toggle('active', tab === 'lodge');
+      document.getElementById('tab-track').classList.toggle('active', tab === 'track');
+      document.getElementById('sectionLodge').style.display = tab === 'lodge' ? 'block' : 'none';
+      document.getElementById('sectionTrack').style.display = tab === 'track' ? 'block' : 'none';
+      if (tab === 'track') {
+        loadComplaintsList();
+      }
+    }
+
+    function previewComplaintPhoto(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          complaintPhotoDataUrl = e.target.result;
+          const img = document.getElementById('complaintPhotoPreview');
+          img.src = e.target.result;
+          img.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    async function loadComplaintsList() {
+      const status = document.getElementById('filterStatusSelect').value;
+      const user = HostelAuth.getUser();
+      const filter = {};
+      if (status) filter.status = status;
+      // If student, filter by student_id
+      if (user && user.role === 'student') {
+        filter.student_id = user.id;
+      }
+
+      const list = await HostelDB.getComplaints(filter);
+      document.getElementById('ticketCountBadge').innerText = list.length;
+      const container = document.getElementById('complaintsListContainer');
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="card" style="text-align: center; padding: 3rem;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎉</div>
+            <h3>No Complaints Found</h3>
+            <p>No active or resolved complaints match your current filter.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map(c => {
+        let badgeClass = 'badge-pending';
+        if (c.status === 'In Progress') badgeClass = 'badge-partial';
+        if (c.status === 'Resolved') badgeClass = 'badge-resolved';
+
+        const isAdmin = user && user.role === 'admin';
+
+        return `
+          <div class="ticket-card">
+            <div class="flex justify-between items-center" style="margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+              <div class="flex items-center gap-2">
+                <span style="font-weight: 800; font-size: 1.05rem; color: var(--primary);">${c.id}</span>
+                <span class="badge ${badgeClass}">${c.status}</span>
+                <span class="badge badge-ac">${c.category}</span>
+                <span class="badge" style="background: #f1f5f9; color: var(--text-muted);">Priority: ${c.priority || 'Medium'}</span>
+              </div>
+              <small style="color: var(--text-muted);">${c.created_at || 'Recently'}</small>
+            </div>
+
+            <h3 style="font-size: 1.15rem; margin-bottom: 0.4rem;">${c.title}</h3>
+            <p style="margin-bottom: 0.75rem;">${c.description}</p>
+
+            <div class="flex items-center justify-between" style="flex-wrap: wrap; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem; font-size: 0.85rem;">
+              <div>
+                <strong>Lodged By:</strong> ${c.student_name || 'Resident'} (${c.room_id || 'Room Unassigned'})
+              </div>
+
+              ${c.photo ? `
+                <div class="flex items-center gap-1">
+                  <span>Photo Attachment:</span>
+                  <img src="${c.photo}" class="photo-thumb" onclick="window.open('${c.photo}', '_blank')" alt="Attachment">
+                </div>
+              ` : ''}
+
+              ${isAdmin ? `
+                <button class="btn btn-sm btn-outline" onclick="openUpdateModal('${c.id}', '${c.status}', '${(c.admin_remarks || '').replace(/'/g, "\\'")}')">
+                  ⚙️ Update Ticket Status
+                </button>
+              ` : ''}
+            </div>
+
+            ${c.admin_remarks ? `
+              <div style="background: #f8fafc; border-left: 3px solid var(--primary-light); padding: 0.75rem 1rem; border-radius: var(--radius-sm); margin-top: 0.75rem; font-size: 0.85rem;">
+                <strong>Admin / Maintenance Remarks:</strong> ${c.admin_remarks}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openUpdateModal(ticketId, status, remarks) {
+      document.getElementById('modalTicketId').value = ticketId;
+      document.getElementById('modalNewStatus').value = status;
+      document.getElementById('modalAdminRemarks').value = remarks || '';
+      document.getElementById('updateTicketModal').classList.add('open');
+    }
+
+    function closeUpdateModal() {
+      document.getElementById('updateTicketModal').classList.remove('open');
+    }
+
+    async function saveComplaintStatus() {
+      const id = document.getElementById('modalTicketId').value;
+      const status = document.getElementById('modalNewStatus').value;
+      const remarks = document.getElementById('modalAdminRemarks').value;
+
+      const res = await HostelDB.updateComplaint(id, status, remarks);
+      if (res.success) {
+        showToast('Complaint ticket status updated successfully', 'success');
+        closeUpdateModal();
+        loadComplaintsList();
+      } else {
+        showToast('Failed to update complaint', 'error');
+      }
+    }
+
+    // Prefill form if user is logged in
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = HostelAuth.getUser();
+      if (user) {
+        document.getElementById('cStudentName').value = user.name || '';
+        document.getElementById('cRoomId').value = user.room_id || '';
+      }
+      loadComplaintsList();
+    });
+
+    document.getElementById('complaintForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const user = HostelAuth.getUser();
+
+      const payload = {
+        student_id: user ? user.id : 'STU-GUEST',
+        student_name: document.getElementById('cStudentName').value,
+        room_id: document.getElementById('cRoomId').value,
+        category: document.getElementById('cCategory').value,
+        priority: document.getElementById('cPriority').value,
+        title: document.getElementById('cTitle').value,
+        description: document.getElementById('cDescription').value,
+        photo: complaintPhotoDataUrl
+      };
+
+      const btn = document.getElementById('submitComplaintBtn');
+      btn.disabled = true;
+      btn.innerText = 'Transmitting Complaint Ticket...';
+
+      try {
+        const res = await HostelDB.submitComplaint(payload);
+        if (res.success) {
+          showToast(`Complaint filed successfully! Ticket ID: ${res.id}`, 'success');
+          document.getElementById('complaintForm').reset();
+          document.getElementById('complaintPhotoPreview').style.display = 'none';
+          complaintPhotoDataUrl = null;
+          switchComplaintTab('track');
+        } else {
+          showToast('Failed to submit complaint', 'error');
+        }
+      } catch (err) {
+        showToast('Network error while filing complaint', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Submit Complaint to Warden Office ➔';
+      }
+    });
+  </script>
+</body>
+</html>

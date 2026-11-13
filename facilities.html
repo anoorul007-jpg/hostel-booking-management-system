@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hostel Facilities & Amenities - Hostel Booking and Management System</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .facility-hero {
+      background: linear-gradient(135deg, #1e3a8a, #0369a1);
+      color: #fff;
+      padding: 4rem 0;
+      text-align: center;
+    }
+    .facility-spec-tag {
+      background: #eff6ff;
+      color: var(--primary-light);
+      padding: 0.25rem 0.6rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: inline-block;
+      margin: 0.2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">🏢</div>
+        Hostel<span>Master</span>
+      </a>
+
+      <button class="menu-toggle" aria-label="Toggle navigation">☰</button>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="rooms.html">Rooms & Blocks</a></li>
+        <li><a href="facilities.html" class="active">Facilities</a></li>
+        <li><a href="complaints.html">Complaints</a></li>
+        <li><a href="booking.html">Book Online</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Facilities Header -->
+  <section class="facility-hero">
+    <div class="container">
+      <span class="badge badge-ac" style="background: rgba(255,255,255,0.2); color: #fff; margin-bottom: 0.75rem;">Premium Campus Infrastructure</span>
+      <h1 style="color: #fff; font-size: 2.8rem; margin-bottom: 1rem;">14 Comprehensive Hostel Facilities</h1>
+      <p style="color: #bfdbfe; max-width: 700px; margin: 0 auto; font-size: 1.1rem;">
+        Engineered to provide university residents with an inspiring, safe, comfortable, and technologically advanced living environment.
+      </p>
+    </div>
+  </section>
+
+  <!-- 14 Facilities Grid -->
+  <section class="section">
+    <div class="container">
+      <div class="facilities-grid">
+
+        <!-- 1. Wi-Fi -->
+        <div class="facility-card">
+          <div class="facility-img">
+            <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&q=80" alt="High-Speed Wi-Fi">
+          </div>
+          <div class="facility-body">
+            <div class="facility-icon-wrap">📶</div>
+            <h3>1. High-Speed Optical Wi-Fi</h3>
+            <p>500 Mbps symmetrical high-speed mesh Wi-Fi network spanning all 4 blocks, study halls, corridors, and lawns with seamless 802.11ax roaming.</p>
+            <div style="margin-top: 1rem;">
+              <span class="facility-spec-tag">500 Mbps Speed</span>
+              <span class="facility-spec-tag">Dual Band 2.4/5 GHz</span>
+              <span class="facility-spec-tag">Zero Dead Zones</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. CCTV Surveillance -->
+        <div class="facility-card">
+          <div class="facility-img">
+            <img src="https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=600&q=80" alt="CCTV Surveillance">
+          </div>
+          <div class="facility-body">
+            <div class="facility-icon-wrap">📹</div>
+            <h3>2. 240+ HD CCTV Surveillance</h3>
+            <p>24/7 AI-assisted infrared night vision CCTV cameras safeguarding campus perimeters, corridors, elevators, parking, and entrances with 90-day archive.</p>
+            <div style="margin-top: 1rem;">
+              <span class="facility-spec-tag">Full HD 1080p</span>
+              <span class="facility-spec-tag">Infrared Night Vision</span>
+              <span class="facility-spec-tag">Central Control Room</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. 24/7 Security -->
+        <div class="facility-card">
+          <div class="facility-img">
+            <img src="https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=600&q=80" alt="24/7 Security">
+          </div>
+          <div class="facility-body">
+            <div class="facility-icon-wrap">🛡️</div>
+            <h3>3. 24/7 Security & Biometrics</h3>
+            <p>Certified security personnel posted at all block entry gates with biometric turnstile access control and digital visitor logging systems.</p>
+            <div style="margin-top: 1rem;">
+              <span class="facility-spec-tag">Armed Gate Guards</span>
+              <span class="facility-spec-tag">Biometric Turnstiles</span>
+              <span class="facility-spec-tag">Emergency Protocols</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Drinking Water -->
+        <div class="facility-card">
+          <div class="facility-img">
+            <img src="https://images.unsplash.com/photo-1548839140-29a749e1bc4e?auto=format&fit=crop&w=600&q=80" alt="Drinking Water">
+          </div>
+          <div class="facility-body">
+            <div class="facility-icon-wrap">💧</div>
+            <h3>4. Multi-Stage RO Drinking Water</h3>
+            <p>Industrial RO + UV + TDS controller water purification stations installed on every single floor with chilled and normal dispensing options.</p>
+            <div style="margin-top: 1rem;">
+              <span class="facility-spec-tag">Multi-Stage UV+RO</span>
+              <span class="facility-spec-tag">Hot & Cold Dispenser</span>
+              <span class="facility-spec-tag">Quarterly Lab Tested</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Laundry Facilities -->
+        <div class="facility-card">
+          <div class="facility-img">
+            <img src="https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&fit=crop&w=600&q=80" alt="Laundry Facilities">
+          </div>
+          <div class="facility-body">
+            <div class="facility-icon-wrap">🧺</div>
+            <h3>5. Automated Laundry Facility</h3>
+            <p>Dedicated laundry zone equipped with heavy-duty smart front-load washing machines, heated tumble dryers, and industrial steam irons.</p>
+            <div style="margin-top: 1rem;">
+              <span class="facility-spec-tag">Smart Washers</span>
+              <span class="facility-spec-tag">Heated Dryers</span>
+              <span class="facility-spec-tag">Steam Press Stations</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Kitchen and Dining Hall -->
+        <div class="facility-card">
+          <div class="facility-img">
+            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80" alt="Kitchen & Dining Hall">
+          </div>
+          <div class="facility-body">
+            <div class="facility-icon-wrap">🍽️</div>
+            <h3>6. Modern Kitchen & Mess Hall</h3>
+            <p>Airy 500-seat multi-cuisine dining hall serving 4 hygienic, well-balanced meals daily prepared in a stainless-steel commercial culinary kitchen.</p>
+            <div style="margin-top: 1rem;">
+              <span class="facility-spec-tag">4 Nutritious Meals/Day</span>
+              <span class="facility-spec-tag">FSSAI Certified</span>
+              <span class="facility-spec-tag">Dietitian Planned</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Study Room -->
+        <div class="facility-card">
+          <div class="facility-img">
+            <img src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=600&q=80" alt="Study Room">
+          </div>
+          <div class="facility-body">
+            <div class="facility-icon-wrap">📚</div>
+            <h3>7. 24/7 Soundproof Study Lounge</h3>
+            <p>Peaceful, air-conditioned study hall with ergonomic seating, individual power sockets, high-CRI reading lamps, and reference libraries.</p>
+            <div style="margin-top: 1rem;">
+              <span class="facility-spec-tag">24/7 Access</span>
+              <span class="facility-spec-tag">Acoustic Soundproofing</span>
+              <span class="facility-spec-tag">Ergonomic Chairs</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. Common TV Room -->
+        <div class="facility-card">
+          <div class="facility-img">
+            <img src="https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&w=600&q=80" alt="Common TV Room">
+          </div>
+          <div class="facility-body">
+            <div class="facility-icon-wrap">📺</div>
+            <h3>8. Common Entertainment Lounge</h3>
+            <p>Spacious relaxation lounge with plush sectional couches, 75-inch 4K UHD smart TV, surround audio, and streaming subscriptions for weekend sports and movies.</p>
+            <div style="margin-top: 1rem;">
+              <span class="facility-spec-tag">75" 4K Smart TV</span>
+              <span class="facility-spec-tag">Ott Streaming</span>
+              <span class="facility-spec-tag">Comfort Couches</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. Parking -->
+        <div class="facility-card">
+          <div class="facility-img">
+            <img src="https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&w=600&q=80" alt="Secure Parking">
+          </div>
+          <div class="facility-body">
+            <div class="facility-icon-wrap">🅿️</div>
+            <h3>9. Secure RFID Parking Bay</h3>
+            <p>Covered and illuminated parking bays for two-wheelers and four-wheelers with automated boom barriers, RFID tagging, and CCTV monitoring.</p>
+            <div style="margin-top: 1rem;">
+              <span class="facility-spec-tag">Covered Bays</span>
+              <span class="facility-spec-tag">RFID Sticker Access</span>
+              <span class="facility-spec-tag">EV Charging Points</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10. Power Backup -->
+        <div class="facility-card">
+          <div class="facility-img">
+            <img src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=600&q=80" alt="Power Backup">
+          </div>
+          <div class="facility-body">
+            <div class="facility-icon-wrap">⚡</div>
+            <h3>10. 100% Dual Generator Backup</h3>
+            <p>Uninterrupted power supply powered by dual 250 kVA silent diesel generators with automatic mains failure (AMF) switchover within 10 seconds.</p>
+            <div style="margin-top: 1rem;">
+              <span class="facility-spec-tag">Twin 250kVA Gensets</span>
+              <span class="facility-spec-tag">10-Sec Switchover</span>
+              <span class="facility-spec-tag">Zero Blackouts</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 11. Housekeeping -->
+        <div class="facility-card">
+          <div class="facility-img">
+            <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80" alt="Housekeeping">
+          </div>
+          <div class="facility-body">
+            <div class="facility-icon-wrap">🧹</div>
+            <h3>11. Professional Housekeeping</h3>
+            <p>Daily scheduled cleaning of corridors, staircase, lounges, and common washrooms using hospital-grade disinfectants and mechanized floor scrubbers.</p>
+            <div style="margin-top: 1rem;">
+              <span class="facility-spec-tag">Daily Sanitization</span>
+              <span class="facility-spec-tag">Mechanized Scrubbing</span>
+              <span class="facility-spec-tag">Waste Segregation</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 12. Attached Bathrooms -->
+        <div class="facility-card">
+          <div class="facility-img">
+            <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80" alt="Attached Bathrooms">
+          </div>
+          <div class="facility-body">
+            <div class="facility-icon-wrap">🚿</div>
+            <h3>12. Modern Attached Bathrooms</h3>
+            <p>Premium rooms feature private en-suite western bathrooms fitted with anti-skid ceramic tiles, Kohler sanitary fixtures, exhaust fans, and vanity mirrors.</p>
+            <div style="margin-top: 1rem;">
+              <span class="facility-spec-tag">Anti-Skid Tiles</span>
+              <span class="facility-spec-tag">Premium Fixtures</span>
+              <span class="facility-spec-tag">High Pressure Shower</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 13. Hot Water Facilities -->
+        <div class="facility-card">
+          <div class="facility-img">
+            <img src="https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=600&q=80" alt="Hot Water">
+          </div>
+          <div class="facility-body">
+            <div class="facility-icon-wrap">♨️</div>
+            <h3>13. 24/7 Solar & Geyser Hot Water</h3>
+            <p>Centralized rooftop solar thermal water heating system backed with high-efficiency electrical geysers ensuring hot water round-the-clock during winter.</p>
+            <div style="margin-top: 1rem;">
+              <span class="facility-spec-tag">10,000L Solar Array</span>
+              <span class="facility-spec-tag">Electric Geyser Backup</span>
+              <span class="facility-spec-tag">Available 24/7</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 14. Indoor and Outdoor Games -->
+        <div class="facility-card">
+          <div class="facility-img">
+            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80" alt="Games and Recreation">
+          </div>
+          <div class="facility-body">
+            <div class="facility-icon-wrap">🏓</div>
+            <h3>14. Indoor & Outdoor Sports Arena</h3>
+            <p>Complete recreational sports infrastructure featuring 4 tournament-grade table tennis tables, 8ft pool tables, carrom boards, chess sets, and outdoor badminton courts.</p>
+            <div style="margin-top: 1rem;">
+              <span class="facility-spec-tag">Table Tennis</span>
+              <span class="facility-spec-tag">Pool & Billiards</span>
+              <span class="facility-spec-tag">Badminton Courts</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="section section-alt" style="text-align: center;">
+    <div class="container">
+      <h2>Experience Campus Living At Its Finest</h2>
+      <p style="max-width: 600px; margin: 0.5rem auto 1.5rem auto;">
+        All 14 amenities are included with zero hidden maintenance fees for every resident student.
+      </p>
+      <div class="flex justify-center gap-2">
+        <a href="rooms.html" class="btn btn-lg btn-primary">Check Room Availability ➔</a>
+        <a href="register.html" class="btn btn-lg btn-secondary">Apply for Admission</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

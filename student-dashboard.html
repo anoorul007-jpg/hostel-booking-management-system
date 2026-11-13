@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Portal - Hostel Booking and Management System</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .student-badge-pill {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: var(--primary);
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .roommate-card {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-alt);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">🏢</div>
+        Hostel<span>Master</span>
+      </a>
+
+      <button class="menu-toggle" aria-label="Toggle navigation">☰</button>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="rooms.html">Rooms & Blocks</a></li>
+        <li><a href="facilities.html">Facilities</a></li>
+        <li><a href="complaints.html">Complaints</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </header>
+
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-user">
+        <img id="sidebarAvatar" src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=300&q=80" class="sidebar-user-img" alt="Student">
+        <div class="sidebar-user-info">
+          <h4 id="sidebarName">Rahul Sharma</h4>
+          <small id="sidebarRoom">Block A • Room 201</small>
+        </div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li>
+          <div class="sidebar-link active" id="tab-nav-room" onclick="switchTab('room')">
+            <span class="icon">🛏️</span> My Room & Bed
+          </div>
+        </li>
+        <li>
+          <div class="sidebar-link" id="tab-nav-payments" onclick="switchTab('payments')">
+            <span class="icon">💳</span> Fee & Receipts
+          </div>
+        </li>
+        <li>
+          <div class="sidebar-link" id="tab-nav-complaints" onclick="switchTab('complaints')">
+            <span class="icon">🛠️</span> My Complaints
+          </div>
+        </li>
+        <li>
+          <div class="sidebar-link" id="tab-nav-vacating" onclick="switchTab('vacating')">
+            <span class="icon">📦</span> Vacate Room Request
+          </div>
+        </li>
+        <li>
+          <div class="sidebar-link" id="tab-nav-profile" onclick="switchTab('profile')">
+            <span class="icon">👤</span> Profile & Guardian
+          </div>
+        </li>
+        <li>
+          <div class="sidebar-link" id="tab-nav-notices" onclick="switchTab('notices')">
+            <span class="icon">📢</span> Hostel Notices
+          </div>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-sm btn-outline" style="width: 100%;" onclick="HostelAuth.logout()">
+          Sign Out of Portal
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="dashboard-main">
+      <!-- Top Welcome Banner -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 style="font-size: 1.85rem;" id="welcomeStudentHeading">Welcome back, Rahul!</h2>
+          <p id="residentSubheading">Resident of Block A (Alpha), Floor 2</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="student-badge-pill" id="residentStatusBadge">
+            <span class="status-indicator status-available"></span> Active Resident
+          </span>
+          <a href="rooms.html" class="btn btn-sm btn-secondary">Explore Other Blocks</a>
+        </div>
+      </div>
+
+      <!-- PANEL 1: MY ROOM & BED -->
+      <section id="panel-room">
+        <div class="grid grid-2 gap-3" style="align-items: start;">
+          <!-- Room Summary Card -->
+          <div class="card" style="padding: 2rem;">
+            <div style="height: 190px; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 1.25rem;">
+              <img id="myRoomPhoto" src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80" style="width: 100%; height: 100%; object-fit: cover;" alt="My Room">
+            </div>
+
+            <div class="flex justify-between items-center" style="margin-bottom: 0.75rem;">
+              <h3 id="myRoomId">Room BlockA-201</h3>
+              <span class="badge badge-ac" id="myRoomTypeBadge">AC Attached</span>
+            </div>
+
+            <div class="grid grid-2 gap-2" style="font-size: 0.9rem; margin-bottom: 1.25rem;">
+              <div>
+                <strong>Allocated Bed:</strong> <span id="myBedNum" style="color: var(--primary); font-weight: 700;">Bed #2</span>
+              </div>
+              <div>
+                <strong>Check-In Date:</strong> <span id="myCheckinDate">2026-08-01</span>
+              </div>
+              <div>
+                <strong>Monthly Rent:</strong> <span id="myMonthlyRent">₹9,500/month</span>
+              </div>
+              <div>
+                <strong>Security Deposit:</strong> <span id="myDepositPaid">₹10,000 (Paid)</span>
+              </div>
+            </div>
+
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem;">Included Room Amenities:</h4>
+            <div class="room-features" id="myRoomAmenities">
+              <span class="feature-tag">✓ Split Air Conditioner</span>
+              <span class="feature-tag">✓ Attached Western Bath</span>
+              <span class="feature-tag">✓ High-Speed Wi-Fi</span>
+              <span class="feature-tag">✓ Dedicated Study Desk</span>
+            </div>
+          </div>
+
+          <!-- Roommates & Capacity Card -->
+          <div class="card" style="padding: 2rem;">
+            <div class="flex justify-between items-center" style="margin-bottom: 1rem;">
+              <h3>Roommates (5-Bed Capacity)</h3>
+              <span class="badge badge-available" id="myRoomVacancy">3 Beds Available</span>
+            </div>
+            <p style="font-size: 0.88rem; margin-bottom: 1.25rem;">Co-residents currently sharing this accommodation with you:</p>
+
+            <div id="roommatesListContainer">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <div style="background: var(--bg-alt); padding: 1rem; border-radius: var(--radius-md); margin-top: 1.5rem; font-size: 0.85rem;">
+              <strong>Warden in-charge:</strong> Mr. Suresh Nair (+91 9845112233)<br>
+              <strong>Daily Inspection & Cleaning:</strong> 10:00 AM – 11:30 AM
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL 2: PAYMENTS & FEE RECEIPTS -->
+      <section id="panel-payments" style="display: none;">
+        <div class="grid grid-3 gap-2" style="margin-bottom: 2rem;">
+          <div class="stat-card">
+            <div class="stat-icon green">₹</div>
+            <div class="stat-details">
+              <h3 id="payMonthlyDue">₹9,500</h3>
+              <p>Monthly Hostel Rent</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue">🛡️</div>
+            <div class="stat-details">
+              <h3>₹10,000</h3>
+              <p>Refundable Deposit (Held)</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple">✓</div>
+            <div class="stat-details">
+              <h3 id="currentPayStatus">Paid</h3>
+              <p>Current Month Status</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="padding: 2rem;">
+          <div class="flex justify-between items-center" style="margin-bottom: 1.25rem;">
+            <div>
+              <h3>Fee Payment Ledger & Invoices</h3>
+              <p style="font-size: 0.88rem;">Download official printable tax receipts for all past transactions.</p>
+            </div>
+            <button class="btn btn-sm btn-primary" onclick="openStudentPayModal()">+ Pay Next Month Rent</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Invoice No</th>
+                  <th>Month</th>
+                  <th>Amount</th>
+                  <th>Payment Mode</th>
+                  <th>Txn Reference</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="studentPaymentsTbody">
+                <!-- Injected dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL 3: COMPLAINTS & TICKETS -->
+      <section id="panel-complaints" style="display: none;">
+        <div class="card" style="padding: 2rem;">
+          <div class="flex justify-between items-center" style="margin-bottom: 1.5rem;">
+            <div>
+              <h3>My Maintenance & Complaint Tickets</h3>
+              <p style="font-size: 0.88rem;">Track progress on your room repairs and maintenance requests.</p>
+            </div>
+            <a href="complaints.html" class="btn btn-sm btn-primary">+ Lodge New Complaint</a>
+          </div>
+
+          <div id="studentComplaintsContainer">
+            <!-- Dynamic complaints cards -->
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL 4: VACATE ROOM REQUEST -->
+      <section id="panel-vacating" style="display: none;">
+        <div class="card" style="max-width: 750px; margin: 0 auto; padding: 2.5rem;">
+          <div style="text-align: center; margin-bottom: 2rem;">
+            <div class="stat-icon orange" style="margin: 0 auto 1rem;">📦</div>
+            <h2>Room Vacating & Checkout Portal</h2>
+            <p>Submit your formal room vacating notice. Once approved by the warden, your bed will be freed up and deposit refunded.</p>
+          </div>
+
+          <div id="vacatingStatusBanner" style="display: none; background: #fff7ed; border-left: 4px solid var(--accent); padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+            <h4 style="color: #9a3412;">Notice Submitted: Pending Warden Approval</h4>
+            <p style="color: #c2410c; font-size: 0.88rem; margin: 0.25rem 0;" id="vacatingBannerDetails">Scheduled leaving date: 30-Nov-2026</p>
+          </div>
+
+          <form id="vacatingRequestForm">
+            <div class="form-group">
+              <label for="vacateLeavingDate">Preferred Checkout / Vacating Date *</label>
+              <input type="date" id="vacateLeavingDate" class="form-control" required>
+              <div class="form-help">Please submit at least 15 days in advance as per hostel guidelines.</div>
+            </div>
+
+            <div class="form-group">
+              <label for="vacateReason">Reason for Vacating Accommodation *</label>
+              <select id="vacateReason" class="form-control" required>
+                <option value="">-- Choose Reason --</option>
+                <option value="Course Completed / Graduation">Course Completed / Graduation</option>
+                <option value="Internship / Relocation">Corporate Internship / City Relocation</option>
+                <option value="Shifting to Day Scholar">Shifting to Day Scholar / Family Home</option>
+                <option value="Personal Reasons">Personal / Medical Reasons</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="vacateBank">Bank Account Details (For Refundable Security Deposit ₹10,000)</label>
+              <textarea id="vacateBank" class="form-control" rows="2" placeholder="Account Holder Name, Bank Name, Account Number, IFSC Code"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-lg btn-danger" style="width: 100%;" id="submitVacateBtn">
+              Submit Official Vacating Request ➔
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- PANEL 5: STUDENT PROFILE -->
+      <section id="panel-profile" style="display: none;">
+        <div class="card" style="padding: 2.5rem; max-width: 800px; margin: 0 auto;">
+          <h3 style="margin-bottom: 1.5rem;">Resident Dossier & Personal Profile</h3>
+
+          <div class="grid grid-2 gap-3" style="font-size: 0.95rem;">
+            <div>
+              <p style="color: var(--text-muted); font-size: 0.8rem;">FULL NAME</p>
+              <strong id="profName">Rahul Sharma</strong>
+            </div>
+            <div>
+              <p style="color: var(--text-muted); font-size: 0.8rem;">STUDENT ID</p>
+              <strong id="profId">STU-001</strong>
+            </div>
+            <div>
+              <p style="color: var(--text-muted); font-size: 0.8rem;">EMAIL ADDRESS</p>
+              <strong id="profEmail">rahul@student.com</strong>
+            </div>
+            <div>
+              <p style="color: var(--text-muted); font-size: 0.8rem;">MOBILE NUMBER</p>
+              <strong id="profMobile">9876543210</strong>
+            </div>
+            <div>
+              <p style="color: var(--text-muted); font-size: 0.8rem;">COLLEGE / UNIVERSITY</p>
+              <strong id="profCollege">National Institute of Tech</strong>
+            </div>
+            <div>
+              <p style="color: var(--text-muted); font-size: 0.8rem;">DEPARTMENT & YEAR</p>
+              <strong id="profDept">Computer Science • 3rd Year</strong>
+            </div>
+            <div>
+              <p style="color: var(--text-muted); font-size: 0.8rem;">PARENT / GUARDIAN</p>
+              <strong id="profParent">Satish Sharma (+91 9876543299)</strong>
+            </div>
+            <div>
+              <p style="color: var(--text-muted); font-size: 0.8rem;">PERMANENT HOME ADDRESS</p>
+              <strong id="profAddress">42, Shanti Nagar, Jaipur</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL 6: HOSTEL NOTICES -->
+      <section id="panel-notices" style="display: none;">
+        <div class="card" style="padding: 2rem;">
+          <h3 style="margin-bottom: 1.5rem;">Official Hostel Broadcast Notices</h3>
+          <div id="studentNoticesList">
+            <!-- Notices loaded dynamically -->
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    let activeStudent = null;
+
+    function switchTab(tabId) {
+      const tabs = ['room', 'payments', 'complaints', 'vacating', 'profile', 'notices'];
+      tabs.forEach(t => {
+        const nav = document.getElementById(`tab-nav-${t}`);
+        const panel = document.getElementById(`panel-${t}`);
+        if (nav) nav.classList.toggle('active', t === tabId);
+        if (panel) panel.style.display = t === tabId ? 'block' : 'none';
+      });
+    }
+
+    async function initStudentPortal() {
+      activeStudent = HostelAuth.requireAuth('student');
+      if (!activeStudent) return;
+
+      // Populate sidebar & headers
+      document.getElementById('sidebarName').innerText = activeStudent.name;
+      document.getElementById('welcomeStudentHeading').innerText = `Welcome back, ${activeStudent.name.split(' ')[0]}!`;
+      document.getElementById('sidebarAvatar').src = activeStudent.profile_photo || 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=300&q=80';
+
+      if (activeStudent.room_id) {
+        document.getElementById('sidebarRoom').innerText = `${activeStudent.block || ''} • Room ${activeStudent.room_number || ''}`;
+        document.getElementById('residentSubheading').innerText = `Resident of ${activeStudent.block || ''}, Floor ${activeStudent.floor || 1}`;
+        document.getElementById('myRoomId').innerText = `Room ${activeStudent.room_id}`;
+        document.getElementById('myBedNum').innerText = `Bed #${activeStudent.bed_number || 1}`;
+        document.getElementById('myCheckinDate').innerText = activeStudent.checkin_date || '2026-08-01';
+        document.getElementById('myMonthlyRent').innerText = `₹${(activeStudent.monthly_rent || 8500).toLocaleString()}/month`;
+        document.getElementById('myRoomTypeBadge').innerText = `${activeStudent.room_type || 'AC'} ${activeStudent.bathroom_type || 'Attached'}`;
+
+        // Load room details & roommates
+        const room = await HostelDB.getRoomById(activeStudent.room_id);
+        if (room) {
+          document.getElementById('myRoomPhoto').src = room.image;
+          document.getElementById('myRoomVacancy').innerText = `${room.available_beds} Beds Available`;
+
+          const container = document.getElementById('roommatesListContainer');
+          const occupants = room.occupants || [];
+          if (occupants.length <= 1) {
+            container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">You are currently the only resident allocated in this room.</p>';
+          } else {
+            container.innerHTML = occupants.filter(u => u.id !== activeStudent.id).map(mate => `
+              <div class="roommate-card">
+                <div style="font-size: 1.5rem;">👤</div>
+                <div style="flex-grow: 1;">
+                  <strong>${mate.name}</strong>
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">${mate.department || 'Student'} • Allocated Bed #${mate.bed_number}</div>
+                </div>
+                <span class="badge badge-ac">Bed #${mate.bed_number}</span>
+              </div>
+            `).join('');
+          }
+        }
+      } else {
+        document.getElementById('sidebarRoom').innerText = 'Room Pending Allocation';
+        document.getElementById('residentSubheading').innerText = 'Your room booking is pending administrator confirmation';
+      }
+
+      // Vacating Status
+      if (activeStudent.status === 'Vacating Requested') {
+        document.getElementById('vacatingStatusBanner').style.display = 'block';
+        document.getElementById('vacatingBannerDetails').innerText = `Scheduled checkout date: ${activeStudent.vacating_date} • Reason: ${activeStudent.vacating_reason || 'Personal'}`;
+        document.getElementById('submitVacateBtn').disabled = true;
+        document.getElementById('submitVacateBtn').innerText = 'Vacating Request Under Review';
+      }
+
+      // Profile tab
+      document.getElementById('profName').innerText = activeStudent.name;
+      document.getElementById('profId').innerText = activeStudent.id;
+      document.getElementById('profEmail').innerText = activeStudent.email;
+      document.getElementById('profMobile').innerText = activeStudent.mobile || 'N/A';
+      document.getElementById('profCollege').innerText = activeStudent.college || 'N/A';
+      document.getElementById('profDept').innerText = `${activeStudent.department || ''} • ${activeStudent.year || ''}`;
+      document.getElementById('profParent').innerText = `${activeStudent.parent_name || 'N/A'} (${activeStudent.parent_contact || ''})`;
+      document.getElementById('profAddress').innerText = activeStudent.address || 'N/A';
+
+      // Load Payments
+      loadStudentPayments();
+
+      // Load Complaints
+      loadStudentComplaints();
+
+      // Load Notices
+      loadStudentNotices();
+    }
+
+    async function loadStudentPayments() {
+      const payments = await HostelDB.getPayments(activeStudent.id);
+      const tbody = document.getElementById('studentPaymentsTbody');
+      if (payments.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted);">No payment records found.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = payments.map(p => `
+        <tr>
+          <td><strong>${p.invoice_no || p.id}</strong></td>
+          <td>${p.month}</td>
+          <td>₹${p.amount.toLocaleString()}</td>
+          <td>${p.payment_method || 'Online'}</td>
+          <td><code style="font-size: 0.8rem;">${p.transaction_ref || 'N/A'}</code></td>
+          <td><span class="badge ${p.status === 'Paid' ? 'badge-available' : 'badge-pending'}">${p.status}</span></td>
+          <td><small>${p.payment_date ? p.payment_date.split(' ')[0] : 'N/A'}</small></td>
+          <td>
+            <button class="btn btn-sm btn-outline" onclick="printStudentReceipt('${p.invoice_no}', '${p.amount}', '${p.month}', '${p.payment_method}')">
+              🖨️ Receipt
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadStudentComplaints() {
+      const complaints = await HostelDB.getComplaints({ student_id: activeStudent.id });
+      const container = document.getElementById('studentComplaintsContainer');
+      if (complaints.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">You have not lodged any complaints. Everything looks peaceful!</p>';
+        return;
+      }
+
+      container.innerHTML = complaints.map(c => {
+        let badge = 'badge-pending';
+        if (c.status === 'In Progress') badge = 'badge-partial';
+        if (c.status === 'Resolved') badge = 'badge-resolved';
+
+        return `
+          <div style="background: var(--bg-alt); padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 1rem; border: 1px solid var(--border-color);">
+            <div class="flex justify-between items-center" style="margin-bottom: 0.5rem;">
+              <div class="flex items-center gap-1">
+                <strong>${c.id}</strong>
+                <span class="badge ${badge}">${c.status}</span>
+                <span class="badge badge-ac">${c.category}</span>
+              </div>
+              <small style="color: var(--text-muted);">${c.created_at}</small>
+            </div>
+            <h4>${c.title}</h4>
+            <p style="font-size: 0.9rem; margin-top: 0.25rem;">${c.description}</p>
+            ${c.admin_remarks ? `
+              <div style="background: #ffffff; padding: 0.6rem 0.85rem; border-radius: var(--radius-sm); margin-top: 0.75rem; font-size: 0.82rem; border-left: 3px solid var(--primary-light);">
+                <strong>Warden Remarks:</strong> ${c.admin_remarks}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function loadStudentNotices() {
+      const notices = await HostelDB.getNotices();
+      const container = document.getElementById('studentNoticesList');
+      container.innerHTML = notices.map(n => `
+        <div style="background: var(--bg-alt); padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 1rem; border-left: 4px solid var(--primary);">
+          <div class="flex justify-between items-center" style="margin-bottom: 0.35rem;">
+            <div class="flex items-center gap-1">
+              <span class="badge ${n.priority === 'Urgent' ? 'badge-occupied' : 'badge-ac'}">${n.priority}</span>
+              <span class="badge badge-nonac">${n.category}</span>
+            </div>
+            <small style="color: var(--text-muted);">${n.date}</small>
+          </div>
+          <h4 style="font-size: 1.1rem;">${n.title}</h4>
+          <p style="margin-top: 0.35rem; font-size: 0.9rem;">${n.content}</p>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">Issued by: ${n.author}</div>
+        </div>
+      `).join('');
+    }
+
+    function printStudentReceipt(inv, amount, month, method) {
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <html>
+        <head>
+          <title>Receipt ${inv}</title>
+          <style>
+            body { font-family: sans-serif; padding: 40px; color: #1e293b; }
+            .header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 20px; }
+            table { width: 100%; border-collapse: collapse; margin: 30px 0; }
+            th, td { padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+            th { background: #f8fafc; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h2>HOSTEL MASTER CAMPUS RESIDENCY</h2>
+            <p>OFFICIAL FEE PAYMENT RECEIPT</p>
+          </div>
+          <div style="margin: 20px 0;">
+            <p><strong>Invoice Number:</strong> ${inv}</p>
+            <p><strong>Resident Name:</strong> ${activeStudent.name} (${activeStudent.id})</p>
+            <p><strong>Allocated Accommodation:</strong> ${activeStudent.room_id || 'Room'} - Bed #${activeStudent.bed_number || 1}</p>
+            <p><strong>Payment Month:</strong> ${month}</p>
+            <p><strong>Payment Mode:</strong> ${method}</p>
+          </div>
+          <table>
+            <thead><tr><th>Particulars</th><th style="text-align:right;">Amount (INR)</th></tr></thead>
+            <tbody>
+              <tr><td>Monthly Accommodation & Maintenance</td><td style="text-align:right;">₹${parseInt(amount).toLocaleString()}.00</td></tr>
+              <tr><td><strong>Total Amount Paid</strong></td><td style="text-align:right;"><strong>₹${parseInt(amount).toLocaleString()}.00</strong></td></tr>
+            </tbody>
+          </table>
+          <p style="color: green; font-weight: bold;">Status: TRANSACTION SUCCESSFUL (PAID)</p>
+          <script>window.print();</scr` + `ipt>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
+
+    async function openStudentPayModal() {
+      const amount = activeStudent.monthly_rent || 8500;
+      const nextMonth = 'December 2026';
+      if (confirm(`Confirm payment of ₹${amount.toLocaleString()} for ${nextMonth} rent via Demo Gateway?`)) {
+        const res = await HostelDB.recordPayment({
+          student_id: activeStudent.id,
+          student_name: activeStudent.name,
+          room_id: activeStudent.room_id,
+          month: nextMonth,
+          amount: amount,
+          type: 'Monthly Rent',
+          payment_method: 'UPI Online'
+        });
+        if (res.success) {
+          showToast(`Rent paid successfully! Invoice: ${res.payment_id}`, 'success');
+          loadStudentPayments();
+        }
+      }
+    }
+
+    // Vacate request form
+    document.getElementById('vacatingRequestForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const leavingDate = document.getElementById('vacateLeavingDate').value;
+      const reason = document.getElementById('vacateReason').value;
+
+      if (!confirm(`Are you sure you want to schedule vacating on ${leavingDate}?`)) return;
+
+      const res = await HostelDB.vacateRoom(activeStudent.id, leavingDate, reason);
+      if (res.success) {
+        showToast('Vacating notice submitted to warden!', 'success');
+        document.getElementById('vacatingStatusBanner').style.display = 'block';
+        document.getElementById('vacatingBannerDetails').innerText = `Scheduled checkout date: ${leavingDate} • Reason: ${reason}`;
+        document.getElementById('submitVacateBtn').disabled = true;
+        document.getElementById('submitVacateBtn').innerText = 'Vacating Request Under Review';
+      } else {
+        showToast(res.error || 'Failed to submit request', 'error');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', initStudentPortal);
+  </script>
+</body>
+</html>

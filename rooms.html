@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hostel Rooms & Interactive Floor Explorer - Hostel Booking and Management System</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .block-nav-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .block-select-btn {
+      flex: 1;
+      min-width: 200px;
+      padding: 1.25rem 1.5rem;
+      background: #ffffff;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-align: left;
+    }
+    .block-select-btn:hover {
+      border-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .block-select-btn.active {
+      border-color: var(--primary);
+      background: #eff6ff;
+      box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.15);
+    }
+    .filter-bar {
+      background: #ffffff;
+      padding: 1.25rem 1.5rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem;
+      justify-content: space-between;
+    }
+    .bed-visual-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      background: var(--bg-alt);
+      border: 1px solid var(--border-color);
+      margin-bottom: 0.5rem;
+    }
+    .bed-visual-item.occupied {
+      background: #fee2e2;
+      border-color: #fca5a5;
+    }
+    .bed-visual-item.available {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon">🏢</div>
+        Hostel<span>Master</span>
+      </a>
+
+      <button class="menu-toggle" aria-label="Toggle navigation">☰</button>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="rooms.html" class="active">Rooms & Blocks</a></li>
+        <li><a href="facilities.html">Facilities</a></li>
+        <li><a href="complaints.html">Complaints</a></li>
+        <li><a href="booking.html">Book Online</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Dynamically injected -->
+      </div>
+    </div>
+  </header>
+
+  <div class="section" style="padding-top: 3rem;">
+    <div class="container">
+      <div class="section-header">
+        <span class="sub-title">Hostel Infrastructure</span>
+        <h2>Interactive Room & Bed Navigator</h2>
+        <p>Explore 4 blocks, 6 floors, and 240 rooms with real-time bed occupancy status.</p>
+      </div>
+
+      <!-- 1. Block Selector Tabs -->
+      <div class="block-nav-bar">
+        <div class="block-select-btn active" id="btn-BlockA" onclick="selectBlock('Block A')">
+          <div>
+            <div class="badge badge-ac" style="margin-bottom: 0.25rem;">Boys Wing</div>
+            <h3 style="font-size: 1.15rem;">Block A (Alpha)</h3>
+            <small style="color: var(--text-muted);">60 Rooms • 300 Beds</small>
+          </div>
+          <span class="status-indicator status-available"></span>
+        </div>
+
+        <div class="block-select-btn" id="btn-BlockB" onclick="selectBlock('Block B')">
+          <div>
+            <div class="badge badge-ac" style="margin-bottom: 0.25rem;">Boys Wing</div>
+            <h3 style="font-size: 1.15rem;">Block B (Beta)</h3>
+            <small style="color: var(--text-muted);">60 Rooms • 300 Beds</small>
+          </div>
+          <span class="status-indicator status-partial"></span>
+        </div>
+
+        <div class="block-select-btn" id="btn-BlockC" onclick="selectBlock('Block C')">
+          <div>
+            <div class="badge badge-nonac" style="margin-bottom: 0.25rem;">Girls Wing</div>
+            <h3 style="font-size: 1.15rem;">Block C (Gamma)</h3>
+            <small style="color: var(--text-muted);">60 Rooms • 300 Beds</small>
+          </div>
+          <span class="status-indicator status-available"></span>
+        </div>
+
+        <div class="block-select-btn" id="btn-BlockD" onclick="selectBlock('Block D')">
+          <div>
+            <div class="badge badge-nonac" style="margin-bottom: 0.25rem;">Girls Wing</div>
+            <h3 style="font-size: 1.15rem;">Block D (Delta)</h3>
+            <small style="color: var(--text-muted);">60 Rooms • 300 Beds</small>
+          </div>
+          <span class="status-indicator status-partial"></span>
+        </div>
+      </div>
+
+      <!-- 2. Floor Selector Tabs (Floors 1 to 6) -->
+      <div style="margin-bottom: 1rem; font-weight: 700; color: var(--text-main); display: flex; justify-content: space-between; align-items: center;">
+        <span id="currentBlockHeader">Block A Floors (Select to View 10 Rooms)</span>
+        <span class="badge badge-available" id="blockAvailabilityBadge">Beds Available</span>
+      </div>
+
+      <div class="floor-selector" id="floorSelectorBar">
+        <!-- Floor tabs 1 through 6 -->
+        <div class="floor-tab active" id="tab-floor-1" onclick="selectFloor(1)">
+          <span>Floor 1 (Ground)</span>
+          <small>Rooms 101 – 110</small>
+        </div>
+        <div class="floor-tab" id="tab-floor-2" onclick="selectFloor(2)">
+          <span>Floor 2</span>
+          <small>Rooms 201 – 210</small>
+        </div>
+        <div class="floor-tab" id="tab-floor-3" onclick="selectFloor(3)">
+          <span>Floor 3</span>
+          <small>Rooms 301 – 310</small>
+        </div>
+        <div class="floor-tab" id="tab-floor-4" onclick="selectFloor(4)">
+          <span>Floor 4</span>
+          <small>Rooms 401 – 410</small>
+        </div>
+        <div class="floor-tab" id="tab-floor-5" onclick="selectFloor(5)">
+          <span>Floor 5</span>
+          <small>Rooms 501 – 510</small>
+        </div>
+        <div class="floor-tab" id="tab-floor-6" onclick="selectFloor(6)">
+          <span>Floor 6</span>
+          <small>Rooms 601 – 610</small>
+        </div>
+      </div>
+
+      <!-- 3. Filter & Search Toolbar -->
+      <div class="filter-bar">
+        <div class="flex items-center gap-2" style="flex-wrap: wrap;">
+          <input type="text" id="searchInput" class="form-control" placeholder="Search room no. (e.g. 101)" style="width: 200px;" oninput="applyFilters()">
+          
+          <select id="filterType" class="form-control" style="width: 150px;" onchange="applyFilters()">
+            <option value="">All Types (AC/Non-AC)</option>
+            <option value="AC">AC Rooms</option>
+            <option value="Non-AC">Non-AC Rooms</option>
+          </select>
+
+          <select id="filterBathroom" class="form-control" style="width: 160px;" onchange="applyFilters()">
+            <option value="">All Bathrooms</option>
+            <option value="Attached">Attached Bath</option>
+            <option value="Common">Common Bath</option>
+          </select>
+
+          <select id="filterStatus" class="form-control" style="width: 170px;" onchange="applyFilters()">
+            <option value="">All Statuses</option>
+            <option value="Available">🟢 Green - Available</option>
+            <option value="Partially Occupied">🟠 Orange - Partial</option>
+            <option value="Fully Occupied">🔴 Red - Full</option>
+            <option value="Maintenance">⚪ Grey - Maintenance</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-1" style="font-size: 0.85rem; font-weight: 600;">
+          Showing: <span id="roomsCountLabel" style="color: var(--primary);">10 Rooms</span>
+        </div>
+      </div>
+
+      <!-- 4. Rooms Grid (10 rooms per floor) -->
+      <div class="rooms-grid" id="roomsGridContainer">
+        <!-- Dynamically injected room cards -->
+        <div style="text-align: center; padding: 3rem; grid-column: 1 / -1; color: var(--text-muted);">
+          Loading rooms architecture...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Room Details & Bed Allocation Modal -->
+  <div class="modal-overlay" id="roomDetailModal">
+    <div class="modal" style="max-width: 650px;">
+      <div class="modal-header">
+        <div class="flex items-center gap-2">
+          <h3 id="modalRoomTitle">Room A-101</h3>
+          <span id="modalRoomBadge" class="badge">Available</span>
+        </div>
+        <button class="modal-close" onclick="closeRoomModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="height: 200px; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 1.25rem;">
+          <img id="modalRoomImg" src="" style="width: 100%; height: 100%; object-fit: cover;" alt="Room Photo">
+        </div>
+
+        <div class="grid grid-2 gap-2" style="margin-bottom: 1.25rem; font-size: 0.9rem;">
+          <div>
+            <strong>Block & Floor:</strong> <span id="modalBlockFloor">Block A, Floor 1</span>
+          </div>
+          <div>
+            <strong>Room Type:</strong> <span id="modalRoomType">AC with Attached Bath</span>
+          </div>
+          <div>
+            <strong>Monthly Rent:</strong> <span id="modalRent" style="font-weight: 700; color: var(--primary);">₹9,500</span>
+          </div>
+          <div>
+            <strong>Security Deposit:</strong> <span id="modalDeposit">₹10,000 (Refundable)</span>
+          </div>
+        </div>
+
+        <p id="modalDesc" style="font-size: 0.9rem; margin-bottom: 1.25rem; color: var(--text-muted);"></p>
+
+        <h4 style="margin-bottom: 0.75rem; font-size: 1rem;">🛏️ Bed Capacity & Occupants (5 Sharing)</h4>
+        <div id="modalBedsList" style="margin-bottom: 1.25rem;">
+          <!-- 5 Beds rendered here -->
+        </div>
+
+        <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">✨ Room Amenities</h4>
+        <div class="room-features" id="modalAmenitiesList"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeRoomModal()">Close</button>
+        <button type="button" class="btn btn-primary" id="modalBookBtn" onclick="proceedToBooking()">Book This Room ➔</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    let currentBlock = 'Block A';
+    let currentFloor = 1;
+    let cachedRooms = [];
+    let selectedRoomForModal = null;
+
+    // Check if query params specified a block or floor
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('block')) {
+      currentBlock = urlParams.get('block');
+    }
+    if (urlParams.get('floor')) {
+      currentFloor = parseInt(urlParams.get('floor'));
+    }
+
+    async function loadRooms() {
+      const container = document.getElementById('roomsGridContainer');
+      container.innerHTML = '<div style="text-align: center; padding: 3rem; grid-column: 1 / -1;">Loading rooms...</div>';
+
+      try {
+        cachedRooms = await HostelDB.getRooms({ block: currentBlock, floor: currentFloor });
+        applyFilters();
+      } catch (err) {
+        container.innerHTML = '<div style="text-align: center; color: red; grid-column: 1 / -1;">Failed to load rooms.</div>';
+      }
+    }
+
+    function selectBlock(blockName) {
+      currentBlock = blockName;
+      ['BlockA', 'BlockB', 'BlockC', 'BlockD'].forEach(b => {
+        const id = `btn-${b}`;
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('active', `Block ${b.replace('Block', '')}` === blockName);
+      });
+      document.getElementById('currentBlockHeader').innerText = `${blockName} Floors (Floor ${currentFloor})`;
+      loadRooms();
+    }
+
+    function selectFloor(floorNum) {
+      currentFloor = floorNum;
+      for (let f = 1; f <= 6; f++) {
+        const el = document.getElementById(`tab-floor-${f}`);
+        if (el) el.classList.toggle('active', f === floorNum);
+      }
+      document.getElementById('currentBlockHeader').innerText = `${currentBlock} Floors (Floor ${currentFloor})`;
+      loadRooms();
+    }
+
+    function applyFilters() {
+      const search = document.getElementById('searchInput').value.trim().toLowerCase();
+      const type = document.getElementById('filterType').value;
+      const bath = document.getElementById('filterBathroom').value;
+      const status = document.getElementById('filterStatus').value;
+
+      let filtered = cachedRooms;
+      if (search) {
+        filtered = filtered.filter(r => r.id.toLowerCase().includes(search) || r.room_number.toString().includes(search));
+      }
+      if (type) {
+        filtered = filtered.filter(r => r.room_type === type);
+      }
+      if (bath) {
+        filtered = filtered.filter(r => r.bathroom_type === bath);
+      }
+      if (status) {
+        filtered = filtered.filter(r => r.status === status);
+      }
+
+      document.getElementById('roomsCountLabel').innerText = `${filtered.length} of 10 Rooms`;
+      renderRooms(filtered);
+    }
+
+    function renderRooms(rooms) {
+      const container = document.getElementById('roomsGridContainer');
+      if (rooms.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔍</div>
+            <h3>No Rooms Match Filters</h3>
+            <p>Try resetting the search filters or choosing another floor.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = rooms.map(room => {
+        // Status classes and text
+        let statusBadgeClass = 'badge-available';
+        let statusText = 'Available (Vacant)';
+        let fillClass = 'fill-green';
+        let statusBorderClass = 'status-border-Available';
+
+        if (room.status === 'Partially Occupied') {
+          statusBadgeClass = 'badge-partial';
+          statusText = `Partial (${room.occupied_beds}/5 Beds)`;
+          fillClass = 'fill-orange';
+          statusBorderClass = 'status-border-Partially';
+        } else if (room.status === 'Fully Occupied') {
+          statusBadgeClass = 'badge-occupied';
+          statusText = 'Fully Occupied (5/5)';
+          fillClass = 'fill-red';
+          statusBorderClass = 'status-border-Fully';
+        } else if (room.status === 'Maintenance') {
+          statusBadgeClass = 'badge-maintenance';
+          statusText = 'Under Maintenance';
+          fillClass = 'fill-red';
+          statusBorderClass = 'status-border-Maintenance';
+        }
+
+        const occPercentage = Math.round((room.occupied_beds / room.capacity) * 100);
+        const isBookable = room.status !== 'Fully Occupied' && room.status !== 'Maintenance';
+
+        return `
+          <div class="room-card ${statusBorderClass}">
+            <div class="room-img-wrap">
+              <img src="${room.image}" alt="Room ${room.room_number}">
+              <div class="room-type-badges">
+                <span class="badge ${room.room_type === 'AC' ? 'badge-ac' : 'badge-nonac'}">${room.room_type}</span>
+                <span class="badge" style="background: rgba(0,0,0,0.6); color: #fff;">${room.bathroom_type} Bath</span>
+              </div>
+              <div class="room-status-badge">
+                <span class="badge ${statusBadgeClass}">${statusText}</span>
+              </div>
+            </div>
+
+            <div class="room-content">
+              <div class="room-header">
+                <div>
+                  <div class="room-number">Room ${room.room_number}</div>
+                  <div class="room-location">${room.block} • Floor ${room.floor}</div>
+                </div>
+                <div class="room-price">
+                  ₹${room.rent.toLocaleString()}<small>/mo</small>
+                </div>
+              </div>
+
+              <!-- Beds status meter -->
+              <div class="room-beds-stat">
+                <div class="flex justify-between items-center" style="font-size: 0.8rem; font-weight: 600;">
+                  <span>Bed Capacity: ${room.capacity}</span>
+                  <span style="color: ${room.available_beds > 0 ? 'var(--status-available)' : 'var(--status-occupied)'};">
+                    ${room.available_beds} Beds Available
+                  </span>
+                </div>
+                <div class="beds-bar-wrap">
+                  <div class="beds-bar-fill ${fillClass}" style="width: ${occPercentage}%;"></div>
+                </div>
+              </div>
+
+              <div class="room-features">
+                ${(room.facilities || []).slice(0, 3).map(f => `<span class="feature-tag">✓ ${f}</span>`).join('')}
+              </div>
+
+              <div class="room-footer">
+                <button class="btn btn-sm btn-secondary" onclick="openRoomModal('${room.id}')">View Details</button>
+                ${isBookable 
+                  ? `<a href="booking.html?room=${room.id}" class="btn btn-sm btn-primary">Book Bed ➔</a>` 
+                  : `<button class="btn btn-sm btn-secondary" disabled style="opacity: 0.5;">Unavailable</button>`}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function openRoomModal(roomId) {
+      const room = await HostelDB.getRoomById(roomId);
+      if (!room) return;
+      selectedRoomForModal = room;
+
+      document.getElementById('modalRoomTitle').innerText = `${room.block} - Room ${room.room_number}`;
+      document.getElementById('modalRoomImg').src = room.image;
+      document.getElementById('modalBlockFloor').innerText = `${room.block}, Floor ${room.floor}`;
+      document.getElementById('modalRoomType').innerText = `${room.room_type} with ${room.bathroom_type} Bathroom`;
+      document.getElementById('modalRent').innerText = `₹${room.rent.toLocaleString()}/month`;
+      document.getElementById('modalDeposit').innerText = `₹${room.deposit.toLocaleString()} (Refundable)`;
+      document.getElementById('modalDesc').innerText = room.description;
+
+      const badge = document.getElementById('modalRoomBadge');
+      badge.className = `badge ${room.status === 'Available' ? 'badge-available' : room.status === 'Partially Occupied' ? 'badge-partial' : room.status === 'Maintenance' ? 'badge-maintenance' : 'badge-occupied'}`;
+      badge.innerText = room.status;
+
+      // Render 5 Beds
+      const occupants = room.occupants || [];
+      const bedsList = document.getElementById('modalBedsList');
+      let bedsHtml = '';
+      for (let b = 1; b <= 5; b++) {
+        const occ = occupants.find(u => u.bed_number === b);
+        if (occ) {
+          bedsHtml += `
+            <div class="bed-visual-item occupied">
+              <div class="flex items-center gap-1">
+                <span>🛏️</span>
+                <strong>Bed #${b}</strong>
+                <span style="font-size: 0.85rem; color: #991b1b; margin-left: 0.5rem;">Occupied by ${occ.name}</span>
+              </div>
+              <span class="badge badge-occupied">Reserved</span>
+            </div>
+          `;
+        } else {
+          bedsHtml += `
+            <div class="bed-visual-item available">
+              <div class="flex items-center gap-1">
+                <span>🛏️</span>
+                <strong>Bed #${b}</strong>
+                <span style="font-size: 0.85rem; color: #065f46; margin-left: 0.5rem;">Vacant & Ready for Allotment</span>
+              </div>
+              <span class="badge badge-available">Vacant</span>
+            </div>
+          `;
+        }
+      }
+      bedsList.innerHTML = bedsHtml;
+
+      // Amenities
+      document.getElementById('modalAmenitiesList').innerHTML = (room.facilities || []).map(f => `<span class="feature-tag">✓ ${f}</span>`).join('');
+
+      // Modal Book Button
+      const bookBtn = document.getElementById('modalBookBtn');
+      if (room.status === 'Maintenance' || room.occupied_beds >= room.capacity) {
+        bookBtn.disabled = true;
+        bookBtn.innerText = 'No Vacant Beds';
+      } else {
+        bookBtn.disabled = false;
+        bookBtn.innerText = 'Book This Room ➔';
+      }
+
+      document.getElementById('roomDetailModal').classList.add('open');
+    }
+
+    function closeRoomModal() {
+      document.getElementById('roomDetailModal').classList.remove('open');
+    }
+
+    function proceedToBooking() {
+      if (selectedRoomForModal) {
+        window.location.href = `booking.html?room=${selectedRoomForModal.id}`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Sync initial active buttons
+      selectBlock(currentBlock);
+      selectFloor(currentFloor);
+    });
+  </script>
+</body>
+</html>
