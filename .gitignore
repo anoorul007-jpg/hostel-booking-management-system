@@ -1,5 +1,10 @@
 __pycache__/
 *.pyc
+node_modules/
+package-lock.json
 .DS_Store
 Thumbs.db
 .vscode/
+.vercel/
+
+.vercel
