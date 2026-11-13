@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hostel Booking and Management System - Mini Project Report</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    @page {
+      size: A4;
+      margin: 18mm 15mm 18mm 15mm;
+      @bottom-right {
+        content: counter(page);
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #1e293b;
+      line-height: 1.6;
+      background: #ffffff;
+      font-size: 10.5pt;
+    }
+
+    .page {
+      page-break-after: always;
+      position: relative;
+    }
+    .page:last-child {
+      page-break-after: auto;
+    }
+
+    /* Cover Page */
+    .cover-page {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      min-height: 920px;
+      padding: 40px 20px;
+      text-align: center;
+      border: 4px double #1e3a8a;
+      border-radius: 8px;
+    }
+    .cover-top h3 {
+      font-size: 14pt;
+      letter-spacing: 2px;
+      color: #64748b;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .cover-top h4 {
+      font-size: 12pt;
+      color: #475569;
+      font-weight: 500;
+    }
+    .cover-middle {
+      margin: 60px 0;
+    }
+    .project-icon {
+      font-size: 48pt;
+      margin-bottom: 15px;
+    }
+    .cover-title {
+      font-size: 26pt;
+      font-weight: 800;
+      color: #1e3a8a;
+      line-height: 1.2;
+      margin-bottom: 15px;
+    }
+    .cover-subtitle {
+      font-size: 12pt;
+      color: #0284c7;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 25px;
+    }
+    .cover-badge-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 15px;
+    }
+    .cover-badge {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e3a8a;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 9pt;
+      font-weight: 700;
+    }
+    .cover-bottom {
+      border-top: 2px solid #e2e8f0;
+      padding-top: 25px;
+      display: flex;
+      justify-content: space-between;
+      text-align: left;
+      font-size: 10pt;
+    }
+    .cover-bottom div {
+      flex: 1;
+    }
+
+    /* Standard Headers */
+    h1 {
+      font-size: 18pt;
+      color: #0f172a;
+      border-bottom: 2px solid #1e3a8a;
+      padding-bottom: 6px;
+      margin-top: 24px;
+      margin-bottom: 14px;
+    }
+    h2 {
+      font-size: 13pt;
+      color: #1e3a8a;
+      margin-top: 18px;
+      margin-bottom: 8px;
+    }
+    h3 {
+      font-size: 11pt;
+      color: #334155;
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+    p {
+      margin-bottom: 10px;
+      text-align: justify;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 9.5pt;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 7px 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+    }
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    /* Highlight Cards & Boxes */
+    .highlight-box {
+      background: #f8fafc;
+      border-left: 4px solid #3b82f6;
+      padding: 12px 16px;
+      margin: 12px 0;
+      border-radius: 0 6px 6px 0;
+      font-size: 9.5pt;
+    }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .metric-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 10px;
+      text-align: center;
+      background: #f8fafc;
+    }
+    .metric-card .num {
+      font-size: 16pt;
+      font-weight: 800;
+      color: #1e3a8a;
+    }
+    .metric-card .label {
+      font-size: 8pt;
+      color: #64748b;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* Code & Preformatted Blocks */
+    pre, code {
+      font-family: 'Consolas', 'Courier New', Courier, monospace;
+    }
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 8.5pt;
+      margin: 10px 0;
+      overflow-x: auto;
+      line-height: 1.4;
+    }
+    code {
+      background: #f1f5f9;
+      color: #0369a1;
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-size: 9pt;
+    }
+
+    ul, ol {
+      margin: 8px 0 12px 24px;
+    }
+    li {
+      margin-bottom: 4px;
+    }
+
+    .badge-status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 8pt;
+      font-weight: 700;
+    }
+    .badge-green { background: #dcfce7; color: #166534; }
+    .badge-orange { background: #ffedd5; color: #9a3412; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-grey { background: #f3f4f6; color: #4b5563; }
+  </style>
+</head>
+<body>
+
+  <!-- ================= PAGE 1: COVER PAGE ================= -->
+  <div class="page">
+    <div class="cover-page">
+      <div class="cover-top">
+        <h3>ACADEMIC MINI PROJECT REPORT</h3>
+        <h4>DEPARTMENT OF COMPUTER SCIENCE & ENGINEERING</h4>
+      </div>
+
+      <div class="cover-middle">
+        <div class="project-icon">🏢</div>
+        <div class="cover-title">HOSTEL BOOKING AND MANAGEMENT SYSTEM</div>
+        <div class="cover-subtitle">Automated Multi-Block Campus Accommodation & Resident Management Portal</div>
+        
+        <div class="cover-badge-row">
+          <span class="cover-badge">4 Blocks</span>
+          <span class="cover-badge">24 Floors</span>
+          <span class="cover-badge">240 Rooms</span>
+          <span class="cover-badge">1,200 Student Beds</span>
+        </div>
+      </div>
+
+      <div class="cover-bottom">
+        <div>
+          <strong>Developed By:</strong><br>
+          Student Engineering Team<br>
+          GitHub: <code>anoorul007-jpg</code><br>
+          Course: Mini Project / Web Systems
+        </div>
+        <div style="text-align: right;">
+          <strong>Academic Year:</strong> 2026 – 2027<br>
+          <strong>Technology Stack:</strong> HTML5, CSS3, JavaScript, Python, SQLite<br>
+          <strong>Deployment:</strong> GitHub & Vercel
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PAGE 2: CERTIFICATE & ABSTRACT ================= -->
+  <div class="page">
+    <h1>Certificate of Project Completion</h1>
+    <p>This is to certify that the project entitled <strong>"Hostel Booking and Management System"</strong> is a bonafide work completed by the candidate towards the partial fulfillment of requirements in the curriculum of Computer Science and Engineering.</p>
+
+    <div style="margin: 35px 0 50px 0; display: flex; justify-content: space-between;">
+      <div>
+        <br><br>
+        ____________________________<br>
+        <strong>Internal Project Guide</strong><br>
+        Department of Computer Science
+      </div>
+      <div style="text-align: right;">
+        <br><br>
+        ____________________________<br>
+        <strong>Head of the Department</strong><br>
+        Dean of Academic Affairs
+      </div>
+    </div>
+
+    <h1>Executive Summary / Abstract</h1>
+    <p>Efficient student housing allocation is a vital operational pillar for educational universities and collegiate institutions. Traditional manual room allotment suffers from communication delays, double-booking errors, lack of real-time vacancy tracking, and sluggish grievance resolution workflows.</p>
+
+    <p>The <strong>Hostel Booking and Management System (HostelMaster)</strong> is an enterprise-scale, automated web portal specifically designed to digitize a hostel campus of <strong>4 distinct residential blocks (Blocks A, B, C, D)</strong>, spanning <strong>6 floors per block</strong> and <strong>10 rooms per floor</strong>, yielding a total capacity of <strong>240 rooms and 1,200 students</strong> (5 students per room).</p>
+
+    <p>The platform delivers a comprehensive set of automated modules: interactive color-coded floor explorers, public student onboarding with simulated SMS OTP verification, bed-level allocation algorithms, 14 cataloged amenities, an 8-category complaint tracking system with photo upload support, student payment histories with downloadable tax receipts, a structured vacating lifecycle, and a Chief Warden administration panel with live KPI analytics and CSV report generation.</p>
+
+    <div class="highlight-box">
+      <strong>Core Impact:</strong> Fully replaces paper registers with automated database records, guarantees zero double-bookings, strictly enforces room capacity ceilings, and enables real-time bed recalibration upon student departures.
+    </div>
+  </div>
+
+  <!-- ================= PAGE 3: ARCHITECTURE & STRUCTURE ================= -->
+  <div class="page">
+    <h1>1. System Scale & Building Structure</h1>
+    <p>The campus residency is modeled as a 3-tier hierarchical structure: Block &rarr; Floor &rarr; Room &rarr; Individual Bed.</p>
+
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="num">4</div>
+        <div class="label">HOSTEL BLOCKS</div>
+      </div>
+      <div class="metric-card">
+        <div class="num">24</div>
+        <div class="label">TOTAL FLOORS (6/Block)</div>
+      </div>
+      <div class="metric-card">
+        <div class="num">240</div>
+        <div class="label">ROOMS (10/Floor)</div>
+      </div>
+      <div class="metric-card">
+        <div class="num">1,200</div>
+        <div class="label">BED CAPACITY (5/Room)</div>
+      </div>
+    </div>
+
+    <h2>1.1 Residential Block Specifications</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Block Identifier</th>
+          <th>Designation</th>
+          <th>Floors & Rooms</th>
+          <th>Total Capacity</th>
+          <th>Room Variations</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Block A (Alpha)</strong></td>
+          <td>Boys Wing (North)</td>
+          <td>Floors 1-6 • 60 Rooms</td>
+          <td>300 Beds</td>
+          <td>AC & Non-AC, Attached / Common Bath</td>
+        </tr>
+        <tr>
+          <td><strong>Block B (Beta)</strong></td>
+          <td>Boys Wing (East)</td>
+          <td>Floors 1-6 • 60 Rooms</td>
+          <td>300 Beds</td>
+          <td>AC & Non-AC, Attached / Common Bath</td>
+        </tr>
+        <tr>
+          <td><strong>Block C (Gamma)</strong></td>
+          <td>Girls Wing (South)</td>
+          <td>Floors 1-6 • 60 Rooms</td>
+          <td>300 Beds</td>
+          <td>AC & Non-AC, Attached / Common Bath</td>
+        </tr>
+        <tr>
+          <td><strong>Block D (Delta)</strong></td>
+          <td>Girls Wing (West)</td>
+          <td>Floors 1-6 • 60 Rooms</td>
+          <td>300 Beds</td>
+          <td>Executive AC Wings, Attached Bath</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>1.2 Real-Time Color-Coded Room Vacancy Status</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Status Indicator</th>
+          <th>Criteria</th>
+          <th>System Behavior</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge-status badge-green">Green – Available</span></td>
+          <td>5 beds vacant (Occupied = 0)</td>
+          <td>Open for new bookings and bed selection.</td>
+        </tr>
+        <tr>
+          <td><span class="badge-status badge-orange">Orange – Partial</span></td>
+          <td>1 to 4 beds occupied</td>
+          <td>Shows remaining vacant bed positions (1 to 4).</td>
+        </tr>
+        <tr>
+          <td><span class="badge-status badge-red">Red – Fully Occupied</span></td>
+          <td>5 beds occupied (Occupied = 5)</td>
+          <td>Booking disabled; strictly blocks excess allocation.</td>
+        </tr>
+        <tr>
+          <td><span class="badge-status badge-grey">Grey – Maintenance</span></td>
+          <td>Under repair / renovation</td>
+          <td>Locked by administrator; temporarily unavailable.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>1.3 Room Pricing Structure</h2>
+    <ul>
+      <li><strong>AC with Attached Bathroom:</strong> &#8377;9,500 / month</li>
+      <li><strong>AC with Common Bathroom:</strong> &#8377;8,000 / month</li>
+      <li><strong>Non-AC with Attached Bathroom:</strong> &#8377;7,000 / month</li>
+      <li><strong>Non-AC with Common Bathroom:</strong> &#8377;6,000 / month</li>
+      <li><strong>Hostel Security Deposit:</strong> &#8377;10,000 (One-time, 100% refundable upon vacating)</li>
+    </ul>
+  </div>
+
+  <!-- ================= PAGE 4: DATABASE & DATA MODELING ================= -->
+  <div class="page">
+    <h1>2. Database Schema & Data Modeling</h1>
+    <p>The backend persistence is governed by an indexed SQLite schema (and synced with an offline localStorage datastore) ensuring instantaneous data read/write latency.</p>
+
+    <h2>2.1 Relational Database Table Definitions</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Table Name</th>
+          <th>Primary Key</th>
+          <th>Foreign Keys</th>
+          <th>Description & Scope</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>rooms</code></td>
+          <td><code>id</code> (VARCHAR)</td>
+          <td>None</td>
+          <td>Stores all 240 rooms with block, floor, capacity (5), occupied beds, rent, and maintenance flags.</td>
+        </tr>
+        <tr>
+          <td><code>users</code></td>
+          <td><code>id</code> (VARCHAR)</td>
+          <td><code>room_id</code> &rarr; <code>rooms.id</code></td>
+          <td>Maintains student and admin profiles, credentials, assigned bed numbers, and vacating statuses.</td>
+        </tr>
+        <tr>
+          <td><code>complaints</code></td>
+          <td><code>id</code> (VARCHAR)</td>
+          <td><code>student_id</code>, <code>room_id</code></td>
+          <td>Logs maintenance grievances with categories, urgency, photo attachments, and resolution notes.</td>
+        </tr>
+        <tr>
+          <td><code>payments</code></td>
+          <td><code>id</code> (VARCHAR)</td>
+          <td><code>student_id</code>, <code>room_id</code></td>
+          <td>Records monthly rent transactions, deposit vouchers, transaction references, and invoices.</td>
+        </tr>
+        <tr>
+          <td><code>notices</code></td>
+          <td><code>id</code> (VARCHAR)</td>
+          <td>None</td>
+          <td>Hostel-wide circulars and announcements posted by the Chief Warden office.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>2.2 DDL Schema Snippets</h2>
+    <pre>
+CREATE TABLE rooms (
+    id TEXT PRIMARY KEY,           -- e.g. 'BlockA-101'
+    block TEXT NOT NULL,          -- 'Block A' to 'Block D'
+    floor INTEGER NOT NULL,       -- 1 to 6
+    room_number INTEGER NOT NULL, -- 101 to 610
+    capacity INTEGER DEFAULT 5,   -- Max 5 students
+    occupied_beds INTEGER DEFAULT 0,
+    available_beds INTEGER DEFAULT 5,
+    room_type TEXT NOT NULL,      -- 'AC' or 'Non-AC'
+    bathroom_type TEXT NOT NULL,  -- 'Attached' or 'Common'
+    rent INTEGER NOT NULL,
+    deposit INTEGER NOT NULL,
+    status TEXT NOT NULL,         -- 'Available', 'Partially Occupied', etc.
+    facilities TEXT, image TEXT, description TEXT
+);</pre>
+
+    <pre>
+CREATE TABLE users (
+    id TEXT PRIMARY KEY,          -- 'STU-001' or 'ADM-001'
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    role TEXT NOT NULL,           -- 'student' or 'admin'
+    mobile TEXT, gender TEXT, college TEXT, department TEXT, year TEXT,
+    parent_name TEXT, parent_contact TEXT, address TEXT,
+    block TEXT, floor INTEGER, room_id TEXT, room_number INTEGER,
+    bed_number INTEGER,           -- Bed #1 to Bed #5
+    status TEXT,                  -- 'Active', 'Pending Approval', 'Vacated'
+    checkin_date TEXT, vacating_date TEXT, profile_photo TEXT
+);</pre>
+  </div>
+
+  <!-- ================= PAGE 5: MODULES & IMPLEMENTATION ================= -->
+  <div class="page">
+    <h1>3. Functional Modules & Implementation Details</h1>
+
+    <h2>3.1 Module 1: Interactive Room Explorer (<code>rooms.html</code>)</h2>
+    <p>Provides a visual floor plan navigator across all 24 floors. When an administrator or student picks Block A and Floor 2, the grid renders rooms 201 through 210 with live bed occupancy bars. Clicking <em>"View Details"</em> opens a modal showing individual Bed #1 through Bed #5 status, indicating whether each bed is vacant or occupied by a named resident.</p>
+
+    <h2>3.2 Module 2: Registration & SMS OTP Verification (<code>register.html</code>)</h2>
+    <p>Collects complete student information including college department, academic year, guardian contact, permanent address, and ID proof. An interactive 6-digit verification modal generates a time-sensitive OTP with a 60-second countdown, preventing fraudulent account creation.</p>
+
+    <h2>3.3 Module 3: Bed Booking & Demo Payment Gateway (<code>booking.html</code>)</h2>
+    <p>Allows registered students to reserve specific vacant beds, calculate total fees (rent + refundable security deposit), and complete checkout through a simulated payment gateway (UPI, Card, NetBanking). Generates a printable fee receipt formatted with transaction IDs and authorized signatures.</p>
+
+    <h2>3.4 Module 4: 14 Core Hostel Facilities (<code>facilities.html</code>)</h2>
+    <p>Detailed catalog covering high-speed optical Wi-Fi (500 Mbps), 240+ CCTV surveillance cameras, 24/7 security with biometric turnstiles, RO drinking water plants on every floor, smart automated laundry, modern dining hall serving 4 meals daily, silent study lounge, TV entertainment lounge, RFID parking bays, dual generator power backup, daily housekeeping, attached bathrooms, centralized hot water, and indoor/outdoor sports arenas.</p>
+
+    <h2>3.5 Module 5: Maintenance Ticketing & Complaints (<code>complaints.html</code>)</h2>
+    <p>Students can file maintenance issues under 8 categories (Water, Electricity, Wi-Fi, Bathroom Cleaning, Room Maintenance, Food Quality, Security, Other) with photo evidence upload. Admins can update tickets from <code>Pending</code> to <code>In Progress</code> and <code>Resolved</code> with technical notes.</p>
+
+    <h2>3.6 Module 6: Student Dashboard (<code>student-dashboard.html</code>)</h2>
+    <p>Residents can review their allocated room and bed position, inspect roommate profiles, track past payment invoices, download printable receipts, file complaints, and submit formal room vacating notices.</p>
+
+    <h2>3.7 Module 7: Admin & Warden Portal (<code>admin-dashboard.html</code>)</h2>
+    <p>Offers live KPI cards, visual management of all 240 rooms, student onboarding approvals, complaint resolution queues, announcement publishing, and one-click export of room inventories and student rosters to CSV.</p>
+  </div>
+
+  <!-- ================= PAGE 6: TESTING, DEPLOYMENT & CONCLUSION ================= -->
+  <div class="page">
+    <h1>4. System Verification, Testing & Results</h1>
+    <p>Automated regression tests were executed on the Python REST server to verify endpoint stability and guardrail enforcement:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Test Case</th>
+          <th>Endpoint / Action Tested</th>
+          <th>Expected Outcome</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>TC-01</td>
+          <td><code>GET /index.html</code></td>
+          <td>HTTP 200 OK, Static file delivery</td>
+          <td><span class="badge-status badge-green">Passed</span></td>
+        </tr>
+        <tr>
+          <td>TC-02</td>
+          <td><code>GET /api/stats</code></td>
+          <td>HTTP 200 OK, Returns 240 rooms & 1200 cap</td>
+          <td><span class="badge-status badge-green">Passed</span></td>
+        </tr>
+        <tr>
+          <td>TC-03</td>
+          <td><code>GET /api/rooms?block=Block+A&floor=1</code></td>
+          <td>HTTP 200 OK, Returns exactly 10 rooms (101-110)</td>
+          <td><span class="badge-status badge-green">Passed</span></td>
+        </tr>
+        <tr>
+          <td>TC-04</td>
+          <td>Capacity Guardrail Test</td>
+          <td>Blocks booking if room occupancy &ge; 5</td>
+          <td><span class="badge-status badge-green">Passed</span></td>
+        </tr>
+        <tr>
+          <td>TC-05</td>
+          <td>Double Booking Guardrail</td>
+          <td>Blocks student from taking 2 active rooms</td>
+          <td><span class="badge-status badge-green">Passed</span></td>
+        </tr>
+        <tr>
+          <td>TC-06</td>
+          <td>Vacating Auto-Recalibration</td>
+          <td>Approval decrements room occupied beds by 1</td>
+          <td><span class="badge-status badge-green">Passed</span></td>
+        </tr>
+        <tr>
+          <td>TC-07</td>
+          <td>Maintenance Mode Toggle</td>
+          <td>Locks room; available beds set to 0</td>
+          <td><span class="badge-status badge-green">Passed</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h1>5. Deployment & Version Control</h1>
+    <p>The system was pushed to GitHub and configured for continuous deployment on Vercel:</p>
+    <ul>
+      <li><strong>GitHub Repository:</strong> <a href="https://github.com/anoorul007-jpg/hostel-booking-management-system">https://github.com/anoorul007-jpg/hostel-booking-management-system</a></li>
+      <li><strong>Vercel Configuration:</strong> <code>vercel.json</code> configured for clean URL routing and static SPA asset distribution.</li>
+      <li><strong>Local Server:</strong> Runs via standard library Python server (<code>python server.py</code>) on <code>http://localhost:8080</code>.</li>
+    </ul>
+
+    <h1>6. Conclusion</h1>
+    <p>The <strong>Hostel Booking and Management System</strong> provides an end-to-end, automated solution for modern campus residency operations. By modeling 4 distinct residential blocks across 24 floors and 240 rooms with granular 5-bed tracking, the project eliminates manual bookkeeping errors, prevents overcapacity, streamlines maintenance workflows, and ensures transparent room allocation for collegiate institutions.</p>
+  </div>
+
+</body>
+</html>
